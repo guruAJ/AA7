@@ -1,0 +1,567 @@
+﻿@model IHSDC.WebApp.Models.AppxEPerformance
+@{
+    ViewBag.Title = "Appx E Report";
+    Layout = "~/Views/Shared/_NewAA7Layout.cshtml";
+}
+
+<div style="position:absolute; right:10px;top:10px">
+    <a class="btn btn-info float-right" href="javascript:history.back()" target="_top">Back</a>
+</div>
+
+
+<div class="row">
+    <input type="button" class="btn btn-info float-right" id="btnExport" value="Export Pdf" />
+</div>
+<body>
+    <div class="card-body" id="PrintAppxE">
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <span style="margin-left: 42%;font-size: 18px;font-weight: 700;  text-decoration: underline;">Appendix E</span><br />
+                <span style="margin-left: 42%; ">(Refers to para 26 of SAO_____________________)</span>
+                <span style="margin-left: 42%;font-size: 18px;font-weight: 700;  text-decoration: underline;">ARMY AVIATION</span><br />
+                <span style="margin-left: 19%;font-size: 16px;font-weight: 700;  text-decoration: underline;">APPLICATION AND PERFORMANCE FORM FOR AVIATORS GRADATION </span><br />
+                <span style="margin-left: 34%;font-size: 16px;font-weight: 700;  text-decoration: underline;">PART-I :AVIATORS PERSONAL DATA </span><br />
+                <span style="margin-left: 35%;font-size: 16px;font-weight: 700;  text-decoration: underline;">(To be completed by the aviators)</span><br />
+            </div>
+            <div class="col-1"></div>
+        </div>
+        <br />
+        <div class="container">
+            <div class="row">
+                <div class="col-12" style="color:black;">
+                    <span style="margin-right: 35px"><b>1.</b></span> <span> <b>No:</b></span> &nbsp;&nbsp;&nbsp;<span><b><u>@Model.finalAppx.ANumber</u></b></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span> <b>Rank</b> &nbsp;&nbsp; :</span> &nbsp;&nbsp;&nbsp;<span><b><u>@Model.finalAppx.Rank</u></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span> <b>Name</b>  &nbsp;&nbsp; :</span> &nbsp;&nbsp;&nbsp;<span><u><b>@Model.finalAppx.AviatorName</b></u></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span> <b>Unit</b>  &nbsp;&nbsp; :</span> &nbsp;&nbsp;&nbsp;<span><u><b>@Model.finalAppx.UnitName</b></u></span>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span> <b>Corps</b>  &nbsp;&nbsp; :</span> &nbsp;&nbsp;&nbsp;<span><b><u>@Model.finalAppx.Col1</u></b></span>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span> <b>Command</b>  &nbsp;&nbsp; :</span> &nbsp;&nbsp;&nbsp;<span><b><u>@Model.finalAppx.AwardByComd</u></b></span>
+
+                </div>
+            </div>
+            <div class="row" style="    margin-top: 12px;">
+                <div class="col-12" style="color:black;">
+                    <b> <span style="margin-right: 35px">2.</span></b>
+                    <span> <b>Aircraft Type :</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><b><u>@Model.finalAppx.AircraftType</u></b></span>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 12px;">
+                <div class="col-12" style="color:black;">
+                    <b>
+                        <span style="margin-right: 35px">3.</span>
+                        <span> Category / Instrument Rating Held (with Date)  :</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><u> @Model.finalAppx.PresentCatIR   @Model.finalAppx.PresentCatIRDate</u>   </span>
+                    </b>
+                </div>
+            </div>
+            <div class="row" style="    margin-top: 12px;">
+                <b>
+                    <span style="margin-right:65px"></span>
+                    <span> Type :</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><u> @Model.finalAppx.PresentCatIRType</u></span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span> Other Type (s) if any :</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><u>@Model.finalAppx.TypesIfAny</u></span>
+                </b>
+
+            </div>
+            <div class="row" style="    margin-top: 12px;">
+                <div class="col-12" style="color:black;">
+                    <b>
+                        <span style="margin-right: 35px">4.</span>
+                        <u>        <span> Details Of Flying Experience (Captain Hours):</span></u>
+                    </b>
+                    <table width="100%" class="table table-bordered" style="    margin-top: 10px;">
+                        <thead>
+                            <tr style="text-align:center">
+                                <td><b>SNo.</b></td>
+                                <td><b>Type</b></td>
+                                <td>
+                                    <b>
+                                        On Type
+                                    </b>
+                                </td>
+                                <td><b>On Helicopters</b></td>
+                                <td><b>All Types</b></td>
+                                <td><b>IMC Hours</b></td>
+                                <td><b>Remarks</b></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="text-align:center">
+                                <td>
+                                    <b> (a)</b>
+                                </td>
+                                <td>
+                                    <b>Day</b>
+                                </td>
+                                <td><b>@Model.ConvertFlyingHrs(@Model.finalAppx.OnHelicoptorDay)</b></td>
+                                <td><b>@Model.ConvertFlyingHrs(@Model.finalAppx.OnHelicoptorDay)</b></td>
+                                <td><b>@Model.ConvertFlyingHrs(@Model.finalAppx.CaptHrsDayOnAllTypes)</b></td>
+                                <td><b>@Model.ConvertFlyingHrs(@Model.finalAppx.IMCDayHrs)</b></td>
+                                <td><b>@Model.finalAppx.RemarksDay</b></td>
+
+
+                            </tr>
+                            <tr style="text-align:center">
+                                <td>
+                                    <b> (b)</b>
+                                </td>
+                                <td>
+                                    <b>Night</b>
+                                </td>
+                                <td><b>@Model.ConvertFlyingHrs(@Model.finalAppx.OnHelicoptornight)</b></td>
+                                <td><b>@Model.ConvertFlyingHrs(@Model.finalAppx.OnHelicoptornight)</b></td>
+                                <td><b>@Model.ConvertFlyingHrs(@Model.finalAppx.CaptHrsNightOnAllTypes)</b></td>
+                                <td><b>@Model.ConvertFlyingHrs(@Model.finalAppx.IMCNightHrs)</b></td>
+                                <td><b>@Html.DisplayFor(m => m.finalAppx.RemarksNight)</b></td>
+
+
+
+                            </tr>
+                            <tr style="text-align:center">
+                                <td>
+                                    <b> (c)</b>
+                                </td>
+                                <td>
+                                    <b>Total</b>
+                                </td>
+                                <td><b>@Model.ConvertFlyingHrs(@Model.finalAppx.OnHelicoptorDay + @Model.finalAppx.OnHelicoptornight)</b></td>
+                                <td><b>@Model.ConvertFlyingHrs(@Model.finalAppx.OnHelicoptorDay + @Model.finalAppx.OnHelicoptornight)</b></td>
+                                <td><b>@Model.ConvertFlyingHrs(@Model.finalAppx.CaptHrsNightOnAllTypes + @Model.finalAppx.CaptHrsDayOnAllTypes)</b></td>
+                                <td><b>@Model.ConvertFlyingHrs(@Model.finalAppx.IMCNightHrs + @Model.finalAppx.IMCNightHrs)</b></td>
+
+
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+
+            <div class="row" style="    margin-top: 12px;">
+                <div class="col-12" style="color:black;">
+                    <b>
+                        <span style="margin-right: 35px">5.</span>
+                        <u><span>Continuity Training :</span></u> <br />
+
+                    </b>
+                    <div style="margin-top: 9px;">
+                        <b>
+                            <span style="margin-left: 54px;">(a)   Day  :</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><u>@Model.finalAppx.DayHrsLastThreeMonth</u>  </span> &nbsp;&nbsp;(Last three months)
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <span>(b)  Night    :</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><u>@Model.finalAppx.NighHrsLastSixMonth</u></span>&nbsp;&nbsp;(Last six months)
+                        </b>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+            <div class="row" style="    margin-top: 12px;">
+                <div class="col-12" style="color:black;">
+                    <b>
+                        <span style="margin-right: 35px">6.</span>
+                        <span><u>Special Qualifications:</u></span><br />
+
+                    </b>
+                    <div style="margin-top: 9px;">
+                        <b>
+                            <span style="margin-left: 54px;">(a)   QFI Cat (with date) :</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><u>@Model.finalAppx.QfiCat   -  @Model.finalAppx.QfiDate </u>  </span> &nbsp;&nbsp;
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <span>Total Instructional Hours  :</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><u>@Model.finalAppx.TotalInstHrs</u></span>&nbsp;&nbsp;
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                        </b><br />
+                        @*<b>
+                                <span style="margin-left: 54px;">(b) Check Aviator's endorsement awarded on</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><u>@Model.finalAppx.CheckAviatorEndorsmentAwardedOn </u>  </span> &nbsp;&nbsp;
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                                                                                                 <span>Command  :</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><u>@Model.finalAppx.AwardByComd</u></span>&nbsp;&nbsp;
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                            </b><br />*@
+
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+
+
+
+
+
+
+            <div class="row" style="    margin-top: 80px;">
+                <div class="col-12" style="color:black;">
+                    <span style="margin-right: 35px"><b>Date :</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span> <b>@DateTime.Now.ToString("MMM  yyy")</b> </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="heading float-right"><b> (Signature of Aviator)</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+                </div>
+
+            </div>
+
+
+
+
+            <div class="row" style="  margin-top: 25px;">
+                <div class="col-12" style="    margin-left: 310px;">
+                    <h6><label><b><u>PART - II RECOMMENDATIONS BY UNIT COMMANDER</u></b></label>   </h6>
+                </div>
+            </div>
+
+            <br />
+            <div class="row" style="    margin-top: 12px;">
+                <div class="col-12" style="color:black;">
+                    <b>
+                        <span style="margin-right: 35px">7.</span>
+                        <span>Recommended for (Cat /IR)  :</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><u>@Model.finalAppx.RecomForCat</u></span>
+                    </b>
+                </div>
+            </div>
+            <div class="row" style="    margin-top: 40px;">
+                <div class="col-12" style="color:black;">
+                    <span style="margin-right: 35px"><b>Date :</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span> <b>@DateTime.Now.ToString("MMM  yyy")</b> </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class="heading float-right"><b> (Signature of Unit Commander)</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+                </div>
+
+            </div>
+
+
+            <div class="row" style="  margin-top: 25px;">
+                <div class="col-12" style="    margin-left: 310px;">
+                    <h6><label><b><u>PART-III PERFORMANCE DURING EXAMINATION</u></b></label></h6>
+                    <span style="    margin-left: 63px;"><b><u>(To be filled by the examiner)</u></b></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12" style="color:black;">
+
+                    <div class="row" style="font-size:16px;    margin-left: 7px;">
+
+                        <span><b>8.</b></span><div class="col-4">
+                            <h6><b><u>Test</u></b></h6>
+                        </div>
+
+                        <div class="col-2">
+                            <label><b><u>Date Examined</u></b></label>
+                        </div>
+                        <div class="col-2">
+                            <label><b><u>Grading Attained</u></b></label>
+                        </div>
+                        <div class="col-4" style="    margin-left: -2%;">
+                            <label><b><u>Remarks</u></b></label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4" style="font-size:16px;    padding-left: 48px;
+">
+                            <h6><b>(a) &nbsp; <u>Ground Subjects</u></b></h6>
+                        </div>
+
+                        <div class="col-2">
+
+                        </div>
+                        <div class="col-2">
+
+                        </div>
+                        <div class="col-4">
+
+                        </div>
+                    </div>
+                    <div class="row" style="padding-bottom:15px;  margin-left: 18px;margin-bottom: -15px;">
+                        <div class="col-4" style="font-size:16px;margin-left:32px">
+                            <label>  <b>(i)</b> </label>  &nbsp;&nbsp;    <label><b> Flying Subject</b></label>
+                        </div>
+                        <div class="col-2" style=";margin-left:-24px">
+                            <b><span>@Model.FlgSubDate</span></b>
+                        </div>
+                        <div class="col-2" style=";margin-left:30px">
+                            <b>  <span>@Model.FlgSubMarks</span><span>%</span></b>
+                        </div>
+                        <div class="col-4">
+                            <b><span>@Model.FlgSubRemarks</span></b>
+                        </div>
+                    </div>
+
+                    <div class="row" style="padding-bottom:15px;  margin-left: 18px;margin-bottom: -15px;">
+                        <div class="col-4" style="font-size:16px;margin-left:32px">
+                            <label>  <b>(ii)</b> </label>  &nbsp;&nbsp;    <label><b> Tactics and Special to Role</b></label>
+                        </div>
+                        <div class="col-2" style=";margin-left:-23px">
+                            <b><span>@Model.TacandSplDate</span></b>
+                        </div>
+                        <div class="col-2" style=";margin-left:30px">
+                            <b><span>@Model.TacandSplMarks</span><span>%</span></b>
+                        </div>
+                        <div class="col-4">
+                            <span>@Model.TacandSplRemarks</span>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-bottom:15px;  margin-left: 18px;margin-bottom: -15px;">
+                        <div class="col-4" style="font-size:16px;    margin-left: 31px;">
+                            <label>  <b>(iii)</b> </label>  &nbsp;&nbsp;    <label><b> Special Bfg (Spl Ex/OP Role)</b></label>
+                        </div>
+                        <div class="col-2" style=";margin-left:-23px">
+                            <b><span>@Model.SplBfgDate</span></b>
+                        </div>
+                        <div class="col-2" style=";margin-left:30px">
+                            <b><span>@Model.SplBfgMarks</span><span>%</span></b>
+                        </div>
+                        <div class="col-4">
+                            <b><span>@Model.SplBfgRemarks</span></b>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4" style="font-size:16px;    padding-left: 48px;">
+
+                            <h6><b>(b) &nbsp; <u> Flying Subjects</u></b></h6>
+                        </div>
+
+                        <div class="col-2">
+
+                        </div>
+                        <div class="col-2">
+
+                        </div>
+                        <div class="col-4">
+
+                        </div>
+                    </div>
+                    <div class="row" style="padding-bottom:15px;  margin-left: 18px;margin-bottom: -15px;">
+                        <div class="col-4" style="font-size:16px;margin-left:32px">
+                            <label>  <b>(i)</b> </label>  &nbsp;&nbsp;    <label><b> Day Flying</b></label>
+                        </div>
+                        <div class="col-2" style=";margin-left:-23px">
+                            <b><span>@Model.DayFlgDate</span></b>
+                        </div>
+                        <div class="col-2" style=";margin-left:30px">
+                            <b><span>@Model.DayFlgMarks</span><span>%</span></b>
+                        </div>
+                        <div class="col-4">
+                            <b><span>@Model.DayFlgRemarks</span></b>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-bottom:15px;  margin-left: 18px;margin-bottom: -15px;">
+                        <div class="col-4" style="font-size:16px;margin-left:32px">
+                            <label>  <b>(ii)</b> </label>  &nbsp;&nbsp;    <label><b> Special Exercises</b></label>
+                        </div>
+                        <div class="col-2" style="margin-left:-23px">
+                            <b><span>@Model.SplExDate</span></b>
+                        </div>
+                        <div class="col-2" style="margin-left:30px">
+                            <b><span>@Model.SplExMarks</span><span>%</span></b>
+                        </div>
+                        <div class="col-4">
+                            <b><span>@Model.SplExRemarks</span></b>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-bottom:15px;  margin-left: 18px;margin-bottom: -15px;">
+                        <div class="col-4" style="font-size:16px;margin-left:32px">
+                            <label>  <b>(iii)</b> </label>  &nbsp;&nbsp;    <label><b> Knowledge of OP Area/Role</b></label>
+                        </div>
+                        <div class="col-2" style="margin-left:-23px">
+                            <b><span>@Model.OpADate</span></b>
+                        </div>
+                        <div class="col-2" style="margin-left:30px">
+                            <b><span>@Model.OpAMarks</span><span>%</span></b>
+                        </div>
+                        <div class="col-4">
+                            <b><span>@Model.OpARemarks</span></b>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-bottom:15px;  margin-left: 18px;margin-bottom: -15px;">
+                        <div class="col-4" style="font-size:16px;margin-left:32px">
+                            <label>  <b>(iv)</b> </label>  &nbsp;&nbsp;    <label><b> Night Flg (incl instr Flg)</b></label>
+                        </div>
+                        <div class="col-2" style="margin-left:-23px">
+                            <b><span>@Model.NiFlgDate</span></b>
+                        </div>
+                        <div class="col-2" style="margin-left:30px">
+                            <b><span>@Model.NiFlgMarks</span><span>%</span></b>
+                        </div>
+                        <div class="col-4">
+                            <b><span>@Model.NiFlgRemarks</span></b>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+            <div class="row" style="    margin-top: 12px;">
+                <div class="col-12" style="color:black;">
+                    <b>
+
+                        <span style="margin-right: 15px  ;  margin-left: 8px;">9.</span>
+                        <span>Remarks by the examiner : </span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+
+                        <span style="margin-left: 43px;">(a)   Category/ Instrument Rating Awarded  :</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><u>@Model.Category</u>   </span>
+                        <br />
+                        <span style="margin-left: 43px;">(b)  Date  of Award  :</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><u>@Model.DateOfAward</u>   </span>
+                        <br />
+                        <span style="margin-left: 43px;">(c)  Special Remarks :</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span><u>@Model.SpecialRemarks </u>  </span>
+
+                    </b>
+
+                </div>
+            </div>
+
+            <div class="row" style="    margin-top: 50px;margin-left:2%">
+                <div class="col-12" style="color:black;">
+                    <div class="row">
+                        <div class="col-6" style="    margin-left: -12px;">
+                            <div class="row">
+                                <span style="margin-right: 35px"><b>Place :</b></span>
+                                <span>  </span>
+                            </div>
+                            <div class="row">
+                                <span style="margin-right: 35px"><b>Date :</b></span>
+                                <b><span> @DateTime.Now.ToString("MMM  yyy") </span></b>
+                            </div>
+
+                        </div>
+                        <div class="col-6">
+                            <div class="row float-right">
+                                <span style="margin-right: 35px"><b>Signature </b></span>
+                                <span style="    margin-left: 31px;">_________________________  </span>
+                            </div>
+                            <div class="row float-right">
+                                <span style="margin-right: 35px"><b>Name</b></span>
+                                <span style="    margin-left: 60px;">_________________________  </span>
+                            </div>
+                            <div class="row float-right">
+                                <span style="margin-right: 35px"><b>Rank </b></span>
+                                <span style="    margin-left: 65px;">_________________________  </span>
+                            </div>
+                            <div class="row float-right">
+                                <span style="margin-right: 35px"><b>Designation </b></span>
+                                <span style="    margin-left: 12px;">_________________________ </span>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+            <div class="row" style="  margin-top: 20px;    margin-bottom: -23px;">
+                <div class="col-12" style="    margin-left: 310px;">
+                    <h6><label><b><u>PART - IV ACTION BY THE GEB</u></b></label>   </h6>
+                </div>
+            </div>
+            <br />
+            <div class="row" style="    margin-top: 6px;">
+                <div class="col-12" style="color:black;">
+                    <b>
+                        <span style="    margin-right: 10px;
+    margin-left: 10px">10.</span>
+                        <span>Aviator's Gradation Card No  </span><span>_______________________________</span>issued/endorsed
+                </div>
+                </b>
+            </div>
+
+            <div class="row" style="    margin-top: 12px;">
+                <div class="col-12" style="color:black;">
+
+                </div>
+
+            </div>
+
+            <div class="row" style="    margin-top: 16px;margin-left:1%">
+                <div class="col-12" style="color:black;">
+                    <div class="row">
+                        <div class="col-6" style="    margin-left: -1px;">
+                            <div class="row" style="    margin-top: 14%;">
+                                <span style="margin-right: 35px"><b>Date : </b></span>
+                                <b> <span> @DateTime.Now.ToString("MMM  yyy") </span></b>
+                            </div>
+
+                        </div>
+                        <div class="col-6">
+                            <div class="row float-right">
+                                <span style="margin-right: 35px"><b>Signature </b></span>
+                                <span style="    margin-left: 31px;">_________________________  </span>
+                            </div>
+                            <div class="row float-right">
+                                <span style="margin-right: 35px"><b>Name</b></span>
+                                <span style="    margin-left: 60px;">_________________________  </span>
+                            </div>
+                            <div class="row float-right">
+                                <span style="margin-right: 35px"><b>Rank </b></span>
+                                <span style="    margin-left: 65px;">_________________________  </span>
+                            </div>
+                            <div class="row float-right">
+                                <span style="margin-right: 35px"><b>Designation </b></span>
+                                <span style="    margin-left: 12px;">_________________________ </span>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <div class="row" style="    margin-top: 12px;">
+                <div class="col-12" style="color:black;">
+                    <b> <span style="    margin-right: 33px;margin-left: 10px;">Note:</span></b>
+                    <span> 1.</span> <span style=" font-weight: 500;"> Two copies of the from to be handed over to the examiner along with the Aviator Gradation Card prior to the commencenment of test</span><br />
+                    <span style="    margin-left: 80px;"> 2.</span> <span style="font-weight: 500;"> Application to be printed on one sheet </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <form action="~/Home/Upload" method="post" id="myForm">
+        <input type="hidden" name="data1" id="data1">
+        <input type="hidden" name="filename" id="filename" value="AppxE">
+
+    </form>
+</body>
+
+
+
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/pdfmake.min.js"></script>
+<script src="~/Scripts/html2canvas.min.js"></script>
+<script>
+
+    $("body").on("click", "#btnExport", function () {
+        debugger;
+        html2canvas($('#PrintAppxE')[0], {
+            onrendered: function (canvas) {
+                var data = canvas.toDataURL();
+                var docDefinition = {
+                    content: [{
+                        image: data,
+                        width: 500
+                    }]
+                };
+               // pdfMake.createPdf(docDefinition).download("AppxE.pdf");
+                const pdfDocGenerator = pdfMake.createPdf(docDefinition);
+                pdfDocGenerator.getBase64((data) => {
+                    $('#data1').val(data);
+                    $("#myForm").submit();
+                });
+            }
+        });
+    });
+
+
+</script>

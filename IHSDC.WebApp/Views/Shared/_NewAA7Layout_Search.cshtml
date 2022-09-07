@@ -1,0 +1,235 @@
+﻿@using Microsoft.AspNet.Identity
+@using IHSDC.WebApp.Connection;
+
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>AA7 </title>
+    <!-- Bootstrap core CSS-->
+    <link href="~/NewContent/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom fonts for this template-->
+    <link href="~/NewContent/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <!-- Page level plugin CSS-->
+    <link href="~/NewContent/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
+    <!-- Custom styles for this template-->
+    <link href="~/NewContent/css/sb-admin.css" rel="stylesheet">
+    @*// @Scripts.Render("~/bundles/modernizr")*@
+
+</head>
+<body id="page-top">
+    <nav class="navbar navbar-expand  static-top" style="background-color: #008cff !important; opacity: 0.8 ">
+        <span class="navbar-brand mr-1 text-light" href="#" style="color: black;font-weight:600;font-size: 30px;">AVIATORS DATABASE & GEB</span>
+        <button class="btn btn-link btn-sm text-black order-1 order-sm-0" id="sidebarToggle" href="#">
+            <i class="fas fa-bars" style="color:black;font-size:18px"></i>
+        </button>
+        <div class="header" style="margin-left: margin-left: 58%;">
+
+
+        </div>
+        <!-- Navbar Search -->
+        <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0"></form>
+        <!-- Navbar -->
+        <ul class="navbar-nav ml-auto ml-md-0">
+
+            <li class="nav-item dropdown no-arrow text-light" style="margin-right: 71px;">
+
+                <h4 class="text-light" style="color:black;font-size:21px;">Logged in User : @SessionManager.UserName</h4>
+            </li>
+            <li class="nav-item dropdown no-arrow text-light">
+
+                <button type="button"  onclick="location.href='@Url.Action("LogOut", "Account")'" class="btn btn-danger text-light">Logout </button>
+
+
+                @*<a class="dropdown-item" onclick="location.href='@Url.Action("LogOut", "Account")'">Logout  <i class="fas fa-user-circle fa-fw" style="color:blacksmoke"></i> </a>*@
+
+
+            </li>
+        </ul>
+    </nav>
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <ul class="sidebar navbar-nav" style="background-color: lightgrey !important; opacity: 0.8 ">
+            <li class="nav-item active">
+                <a class="nav-link" style="color:black" href="~/Home/Index">
+                    <i class="fas fa-fw fa-tachometer-alt" style="color:black"></i>
+                    <span style="color:black;font-size:21px">Dashboard</span>
+                </a>
+            </li>
+            @if (Request.IsAuthenticated)
+            {
+
+
+                <li class="nav-item">
+                    <a class="nav-link active" style="font-size: 18px;
+    color: black;font-weight:500" href='@Url.Action("AviatorList", "Search")'>Aviator </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" style="font-size: 18px;
+    color: black;font-weight:500" href='@Url.Action("AviatorCourseList", "Search")'>Aviator Courses </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" style="font-size: 18px;
+    color: black;font-weight:500" href='@Url.Action("AviatorMedicalList", "Search")'>Aviator Medical </a>
+                </li>
+
+
+
+                <li class="nav-item">
+                    <a class="nav-link active" style="font-size: 18px;
+    color: black;font-weight:500" href='@Url.Action("AviatorHonourAwardsList", "Search")'>Aviator Honour Awards </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" style="font-size: 18px;
+    color: black;font-weight:500" href='@Url.Action("AviatorSpecialEqptList", "Search")'>Aviator Special Eqpt</a>
+                </li>
+                if (SessionManager.Role != "Unit")
+                {
+                    <li class="nav-item">
+                        <a class="nav-link active" style="font-size: 18px;
+    color: black;font-weight:500" href='@Url.Action("AviatorAccidentList", "Search")'>Aviator Accident/Incident</a>
+                    </li>
+                }
+                <li class="nav-item">
+                    <a class="nav-link active" style="font-size: 18px;
+    color: black;font-weight:500" href='@Url.Action("AviatorQualificationList", "Search")'>Aviator Special Qualification</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" style="font-size: 18px;
+    color: black;font-weight:500" href='@Url.Action("AviatorApptList", "Search")'>Aviator Appt </a>
+                </li>
+
+
+                <li class="nav-item">
+                    <a class="nav-link active" style="font-size: 18px;
+    color: black;font-weight:500" href='@Url.Action("AviatorRankList", "Search")'>Aviator Rank</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link active" style="font-size: 18px;
+    color: black;font-weight:500" href='@Url.Action("AviatorContactDetailsList", "Search")'>Aviator Contacts </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" style="font-size: 18px;
+    color: black;font-weight:500" href='@Url.Action("AviatorFlyingHrsList", "Search")'>Aviator Flying Hrs </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" style="font-size: 18px;
+    color: black;font-weight:500" href='@Url.Action("AviatorPostingList", "Search")'>Aviator Posting In/Out</a>
+                </li>
+
+            }
+        </ul>
+
+        <div id="content-wrapper">
+            <div class="container-fluid">
+                @*background-color: lightgrey !important; opacity: 0.8; font-size: 24px;*@
+                <div class="card mb-3">
+                    <div class="card-header" style="">
+                        @*<i class="fas fa-chart-area"></i>*@
+
+
+                        <span style="font-weight:500">@ViewBag.Title</span>   
+                    </div>
+                    <div class="card-body">
+                        @RenderBody()
+                    </div>
+
+                </div>
+                <!-- DataTables Example -->
+
+            </div>
+            <!-- /.container-fluid -->
+            <!-- Sticky Footer -->
+            <footer class="sticky-footer" style="background-color: #008cff; opacity: 0.8; margin-bottom: -19px; position: fixed; ">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        @*<span>Copyright © Your Website 2022</span>*@
+                        <p class="mb-0 text-light" style="font-size:22px;" >Copyright © 2022. Developed by <span class="text-light">ASDC , DGIS :</span> Sponsor Dte : <span class="text-light">Aviation Dte </span> </p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+        <!-- /.content-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="login.html">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap core JavaScript-->
+    <script src="~/NewContent/vendor/jquery/jquery.min.js"></script>
+    <script src="~/NewContent/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="~/NewContent/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <!-- Page level plugin JavaScript-->
+    <script src="~/NewContent/vendor/chart.js/Chart.min.js"></script>
+    <script src="~/NewContent/vendor/datatables/jquery.dataTables.js"></script>
+    <script src="~/NewContent/vendor/datatables/dataTables.bootstrap4.js"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="~/NewContent/js/sb-admin.min.js"></script>
+    <!-- Demo scripts for this page-->
+    <script src="~/NewContent/js/demo/datatables-demo.js"></script>
+    <script src="~/NewContent/js/demo/chart-area-demo.js"></script>
+</body>
+</html>
+<style>
+
+    /*a:hover {
+        background-image: linear-gradient(to top left, #ff9933 22%, #cc99ff 90%);
+    }*/
+
+    .dropdown-item:hover {
+        background: linear-gradient(to top left, #ff9933 22%, #cc99ff 90%);
+    }
+
+    .dropdown-item {
+        font-weight: 500;
+    }
+
+    .collapsCol {
+        background-image: linear-gradient(120deg,#a1c4fd 0,#c2e9fb 100%);
+        
+        max-height: 44px;
+    }
+    .btnCol {
+        font-size: 22px;
+        color: black;
+        font-weight: 500;
+        margin-top: -14px;
+    }
+</style>
+<script>
+    function toTitleCase(str) {
+        return str.replace(/(?:^|\s)\w/g, function (match) {
+            return match.toUpperCase();
+        });
+    }
+</script>
+@RenderSection("scripts", required: false)

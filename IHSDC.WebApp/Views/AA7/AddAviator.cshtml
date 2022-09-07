@@ -1,0 +1,451 @@
+﻿@model IHSDC.WebApp.Models.AviatorCRUD
+@using IHSDC.WebApp.Connection
+@{
+    var message = TempData["Message"] ?? string.Empty;
+    var messageStatus = TempData["messageStatus"] ?? string.Empty;
+    var messagemidStatus = TempData["messagemidStatus"] ?? string.Empty;
+    ViewBag.Title = "Add Aviator";
+    Layout = "~/Views/Shared/_NewAA7Layout.cshtml"; int sno = 0;
+    
+ }
+
+
+@*<br />*@
+<div class="card-body">
+    @using (Html.BeginForm("AddAviator", "AA7", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="card-body">
+
+
+            @if (Convert.ToString(SessionManager.Role) == "Unit" || Convert.ToString(SessionManager.Role) == "SecondInCommand" && ViewBag.ButtonName == "Update" || Convert.ToString(SessionManager.Role) == "FlightCommander" && ViewBag.ButtonName == "Update")
+            {
+                <div class="row">
+                    <div class="col-3">
+                        <label><b>Prefix</b></label>
+                        @Html.DropDownListFor(m => m.PrefixLetter, (new IHSDC.WebApp.Models.MasterModels()).LoadANumber(), "--Select Prefix --", new { @data_show_subtext = "true", @class = "select form-control", @data_live_search = "true", @required = true })
+                    </div>
+
+                    <div class="col-3">
+                        <label><b>Army Number</b></label>
+                        @Html.TextBoxFor(m => m.ANumber, new { @class = "form-control", @required = true, @onkeypress = "return blockSpecialChar(event)", @onchange = "SetSuffixLetter(this)", @maxlength = "5" })
+                    </div>
+                    <div class="col-2">
+                        <label><b> Suffix Letter </b></label>
+
+                        @Html.TextBoxFor(m => m.SuffixLetter, new { @class = "form-control", @readonly = true })
+
+                    </div>
+                    <div class="col">
+                        <label><b> Aviator Rank</b></label>
+                        @Html.DropDownListFor(m => m.AviatorRank, (new IHSDC.WebApp.Models.MasterModels()).LoadRanks(), "--Select Aviator Rank --", new { @data_show_subtext = "true", @class = "select form-control", @data_live_search = "true", @required = true })
+
+                    </div>
+
+                </div>
+
+
+                <div class="row">
+
+
+                    <div class="col">
+                        <label><b> First Name</b></label>
+                        @Html.TextBoxFor(m => m.FirstName, new
+                        {
+                            @class = "form-control",
+                            @required = true,
+                            @onchange = "Case(this)",
+                            @onkeypress = "return onlyAlph(event)" })
+                    </div>
+                    <div class="col">
+                        <label><b> Middle Name</b></label>
+                        @Html.TextBoxFor(m => m.MiddleName, new { @class = "form-control", @onchange = "Case(this)" , @onkeypress = "return onlyAlph(event)" })
+                    </div>
+                    <div class="col">
+                        <label><b> Last Name</b></label>
+                        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", @onchange = "Case(this)", @onkeypress = "return onlyAlph(event)" })
+                    </div>
+                    <div class="col">
+                        <label><b> Arm / Service </b></label>
+                        @Html.DropDownListFor(m => m.ArmService_ID, (new IHSDC.WebApp.Models.MasterModels()).LoadArmServiceName(), "--Select Arm / Service --", new { @data_show_subtext = "true", @class = "select form-control", @data_live_search = "true", @required = true })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label><b>Date of Birth</b></label>
+                        @Html.TextBoxFor(m => m.DateOfBirth, new { @class = "form-control", @required = true, @onchange = "isDate(this), checkDate(this)", @placeholder = "dd/mmm/yyyy", })
+                    </div>
+
+                    <div class="col">
+                        <label><b>Date of Commision</b></label>
+                        @Html.TextBoxFor(m => m.DateOfCommision, new { @TYPE = "text", @class = "form-control", @required = true, @onchange = "isDate(this),check(this,'DateOfBirth','Date of Birth')" })
+
+
+                    </div>
+                    <div class="col">
+                        <label><b>Date of Promotion </b></label>
+                        @Html.TextBoxFor(m => m.DateOfRank, new { @class = "form-control", @required = true, @onchange = "isDate(this), checkDate(this),check(this,'DateOfCommision','Date of Commision')", @placeholder = "dd/mmm/yyyy" })
+                    </div>
+
+                    <div class="col">
+                        <label><b>Date of Seniority</b></label>
+                        @Html.TextBoxFor(m => m.DateOfSeniority, new { @class = "form-control", @required = true, @onchange = "isDate(this), checkDate(this),check(this,'DateOfCommision','Date of Commision')", @placeholder = "dd/mmm/yyyy" })
+                    </div>
+
+                </div>
+                <div class="row">
+
+                    <div class="col">
+                        <label><b>Date of Wings</b></label>
+                        @Html.TextBoxFor(m => m.DateOfWings, new { @TYPE = "text", @class = "form-control", @required = true, @onchange = "isDate(this),check(this,'DateOfSeniority','Date of Seniority')", @placeholder = "dd/mmm/yyyy" })
+                    </div>
+                    <div class="col">
+                        <label><b>Cat Card No</b></label>
+                        @Html.TextBoxFor(m => m.CatCardNo, new { @TYPE = "text", @class = "form-control", @required = true, @onkeypress = "return catCardValidation(event)" })
+                    </div>
+
+                    <div class="col">
+                        <label><b>Date Of Issue Cat Card</b></label>
+                        @Html.TextBoxFor(m => m.DateofIssueCatCard, new { @TYPE = "text", @class = "form-control", @required = true, @onchange = "isDate(this),check(this,'DateOfWings','Date of Wings Awarded')" })
+                    </div>
+                    <div class="col">
+                        <label><b> Aircraft Type</b></label>
+                        @Html.DropDownListFor(m => m.Aircraft_ID, (new IHSDC.WebApp.Models.MasterModels()).LoadAircraftName(), "--Select Aircraft Type --", new { @data_show_subtext = "true", @class = "select form-control", @data_live_search = "true", @required = true })
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-10"></div>
+                    <div class="col" style="margin-top:2.5%;margin-bottom:-2.0%;text-align:center">
+                        <button type="submit" value="@ViewBag.ButtonName" name="btnval" class="btn btn-success">@ViewBag.ButtonName</button>
+
+                        <a class="btn btn-info float-right" href="@Url.Action("Index","Home")" target="_top">
+                            Back
+                        </a>
+                    </div>
+
+                </div>
+
+            }
+
+
+        </div>
+    }
+
+</div>
+
+
+@*//view ended*@
+
+<hr />
+
+
+<div class="table-responsive">
+    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th class="center">S/No</th>
+                <th class="center" width="350px">Aviator Name</th>
+                <th class="center">Arms Service </th>
+                <th class="center">Aircraft Type</th>
+                <th class="center">Unit Name</th>
+                <th class="center" width="150px">Date of Birth</th>
+                <th class="center" width="150px">Date of Seniority</th>
+                <th class="center" width="150px">Date of Wings</th>
+                <th class="center">Cat Card No</th>
+                <th class="center">Date Of commision</th>
+                <th class="center" width="150px">Date of Issue Cat Card</th>
+                @if (Convert.ToString(SessionManager.Role) == "Unit" || Convert.ToString(SessionManager.Role) == "SecondInCommand" || Convert.ToString(SessionManager.Role) == "FlightCommander")
+                {
+                    <th class="center" width="100px"> Actions </th>
+
+                    <th class="center"> Status</th>
+                }
+                <th>
+                    View 
+                </th>
+            </tr>
+        </thead>
+        <tbody id="tbody">
+            @if (ViewBag.count > 0)
+            {
+                foreach (var item in Model.ILAviatorCRUD)
+                {
+                    <tr>
+                        <td>
+                            @{ sno++; }
+                            @sno
+                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.AviatorName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.ArmServiceName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.AircraftName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.UnitName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.DateOfBirth)</td>
+                        <td>@Html.DisplayFor(modelItem => item.DateOfSeniority)</td>
+                        <td>@Html.DisplayFor(modelItem => item.DateOfWings)</td>
+                        <td>@Html.DisplayFor(modelItem => item.CatCardNo)</td>
+                        <td>@Html.DisplayFor(modelItem => item.DateofIssueCatCard)</td>
+                        <td>@Html.DisplayFor(modelItem => item.DateOfCommision)</td>
+
+                        @if (Convert.ToString(SessionManager.Role) == "Unit" || Convert.ToString(SessionManager.Role) == "SecondInCommand" || Convert.ToString(SessionManager.Role) == "FlightCommander")
+                        {
+                            <td>
+                                @if (Convert.ToString(SessionManager.Role) == "Unit")
+                                {
+                                    if (item.Validation == null)
+                                    {
+                                        <a onclick="location.href='@Url.Action("AddAviator", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Aviator_ID.ToString()) })'">
+                                            <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                        </a>
+
+                                        <span>|</span>
+                                        <a id="btndel" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Aviator_ID.ToString())' onclick="DeleteConfirmation(this,'/AA7/DeleteAviator')">
+                                            <img src="~/images/Delete.png" width="30" height="30" border="0" />
+                                        </a><span>|</span>
+                                        <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Aviator_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviator','Do you want to Submit to 2IC ','SubmitClk')">
+                                            <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                        </a>
+
+
+                                    }
+
+                                    if (item.Validation == "Rejected by 2IC")
+
+                                    {
+                                        <a onclick="location.href='@Url.Action("AddAviator", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Aviator_ID.ToString()) })'">
+                                            <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                        </a><span>|</span>
+                                        <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Aviator_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviator','Do you want to Submit to 2IC ','SubmitClk')">
+                                            <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                        </a>
+
+                                    }
+
+
+                                }
+                                @if (Convert.ToString(SessionManager.Role) == "SecondInCommand")
+                                {
+
+                                    if (item.Validation == "Submitted to 2IC" || item.Validation == "Rejected by Flt Cdr")
+                                    {
+                                        <a onclick="location.href='@Url.Action("AddAviator", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Aviator_ID.ToString()) })'">
+                                            <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                        </a><span>|</span>
+                                        <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Aviator_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviator','Do you want to Submit to Flt Cdr','Validate2IC')">
+                                            <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                        </a>
+                                        <span>|</span>
+                                        <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Aviator_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviator','Do you want to Reject ','Reject2IC')">
+                                            <img src="~/images/Reject.png" width="30" height="30" border="0" />
+                                        </a>
+                                    }
+                                }
+                                @if (Convert.ToString(SessionManager.Role) == "FlightCommander")
+                                {
+                                    if (item.Validation != "Rejected by Flt Cdr")
+                                    {
+                                        <a onclick="location.href='@Url.Action("AddAviator", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Aviator_ID.ToString()) })'">
+                                            <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                        </a><span>|</span>
+                                        <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Aviator_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviator','Do you want to Counter Validate','ValidateFltCdr')">
+                                            <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                        </a>
+                                        <span>|</span>
+                                        <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Aviator_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviator','Do you want to Reject ','RejectFltCdr')">
+                                            <img src="~/images/Reject.png" width="30" height="30" border="0" />
+                                        </a>
+                                        <span>|</span>
+                                        <a id="btndel" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Aviator_ID.ToString())' onclick="DeleteConfirmation(this,'/AA7/DeleteAviator')">
+                                            <img src="~/images/Delete.png" width="30" height="30" border="0" />
+                                        </a>
+                                    }
+                                }
+
+                            </td>
+                            <td>
+                                @if (Convert.ToString(SessionManager.Role) == "Unit")
+                                {
+
+                                    if (item.Validation != null)
+                                    {<label><b>  @item.Validation</b></label>}
+
+                                if (item.CounterValidation != null)
+                                {<label><b> @item.CounterValidation</b></label>}
+
+                            if (item.CounterValidation == null && item.Validation == null)
+                            {<label><b> New Data</b></label>}
+
+
+                        }
+                                @if (Convert.ToString(SessionManager.Role) == "SecondInCommand")
+                                {
+                                    if (item.CounterValidation != "Rejected by Flt Cdr")
+                                    {
+                                        if (item.Validation == "Submitted to 2IC")
+                                        {<label><b>  Submitted By Clk</b></label>}
+
+                                        if (item.CounterValidation == "Submitted to Flt Cdr")
+                                        {<label><b>  @item.CounterValidation</b></label>}
+                                }
+
+                                if (item.Validation == "Rejected by Flt Cdr")
+                                {<label><b>  @item.Validation</b></label>}
+                            if (item.Validation == "Rejected by 2IC")
+                            {<label><b>  @item.Validation</b></label>}
+
+                    }
+
+
+
+                                @if (Convert.ToString(SessionManager.Role) == "FlightCommander")
+                                {
+
+                                    <label><b>  @item.Validation</b></label>
+
+
+                                }
+
+
+                            </td>}
+                            <td>
+                                <a onclick="location.href='@Url.Action("ViewAviatorDetails", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Aviator_ID.ToString()) })'">
+                                    <i class="fa fa-eye" style="font-size:25px" aria-hidden="true"></i>
+                                </a>
+
+                            </td>
+
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr><td colspan="4" style="font-weight:600;color:red;text-align:center"> No Record Found!!!</td></tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Content/CustomJS/DeleteConfirmation.js"></script>
+<script src="~/Content/CustomJS/AviatorJS.js"></script>
+<script src="~/Content/css/sweetalert.min.js"></script>
+<link href="~/Content/css/sweetalert.css" rel="stylesheet" />
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryui")
+    @Styles.Render("~/Content/cssjqryUi")
+    <script type="text/javascript">
+    var message = '@message';
+    var messageStatus = '@messageStatus';
+    var messagemidStatus = '@messagemidStatus ';
+    if (message)
+            sweetAlert(message, messagemidStatus, messageStatus);
+        var today = new Date();
+            $('#DateofIssueCatCard').datepicker({
+                uiLibrary: 'bootstrap4',
+                dateFormat: "dd/M/yy",
+                autoclose: true,
+                maxDate: today
+            });
+            $('#DateOfBirth').datepicker({
+                uiLibrary: 'bootstrap4',
+                dateFormat: "dd/M/yy",
+                autoclose: true,
+                maxDate: today
+            });
+            $('#DateOfSeniority').datepicker({
+                uiLibrary: 'bootstrap4',
+                dateFormat: "dd/M/yy",
+                autoclose: true,
+                maxDate: today
+            });
+            $('#DateOfWings').datepicker({
+                uiLibrary: 'bootstrap4',
+                dateFormat: "dd/M/yy",
+                autoclose: true,
+                maxDate: today
+            });
+            $('#DateOfRank').datepicker({
+                uiLibrary: 'bootstrap4',
+                dateFormat: "dd/M/yy",
+                autoclose: true,
+                maxDate: today
+        });
+
+        $('#DateOfCommision').datepicker({
+            uiLibrary: 'bootstrap4',
+            dateFormat: "dd/M/yy",
+            autoclose: true,
+            maxDate: today
+        });
+
+
+
+
+        function checkDate(obj) {          
+            var a = $(obj).parent().children()[0];          
+            var text = $(a).text();
+            Date.prototype.toShortFormat = function () {
+                var month_names = ["Jan", "Feb", "Mar",
+                    "Apr", "May", "Jun",
+                    "Jul", "Aug", "Sep",
+                    "Oct", "Nov", "Dec"];
+
+                var day = this.getDate();
+                var month_index = this.getMonth();
+                var year = this.getFullYear();
+
+                return "" + day + "/" + month_names[month_index] + "/" + year;
+            }
+
+
+            var today = new Date();
+            var getDate = $(obj).val();
+
+            if (today.toShortFormat() <= getDate) {
+                sweetAlert(' ' + text + '  can not be greater then to date !', '', 'warning');
+                $(obj).val('');
+                $(obj).focus();
+
+            }
+        
+
+        }
+
+
+        function check(obj,compareField,comparemsg) {
+            debugger;
+            var a = $(obj).parent().children()[0]       
+            var text = $(a).text();
+            var DateofIssueCatCard = $(obj).val();
+            var DateOfWings = $('#' +compareField+'').val();
+            if (DateOfWings > DateofIssueCatCard) {
+                sweetAlert(' ' + text + ' can not be less then ' + comparemsg + ' !', 'Please Re-Enter ' + text  + '', 'warning');
+                $(obj).val('');
+                $(obj).focus();
+            }
+        }
+
+      
+
+
+        function catCardValidation(event) {
+
+            if ((event.which < 48 || event.which > 57) && event.which != 46 ) {
+                if (event.which == 8 || event.which == 0 || event.which == 196 || event.which == 95 || event.which == 47 || event.which == 45 || event.which == 92) {
+                    return true;
+
+                }
+                else if (((event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || event.charCode == 32)) {
+                    return true;
+
+                }
+                else {
+                    return false;
+                }
+
+            }
+        }
+
+    </script>
+}
+

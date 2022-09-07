@@ -1,0 +1,513 @@
+﻿@model IHSDC.WebApp.Models.VieViewAviatorDetails
+@{
+    ViewBag.Title = "View Aviator Details";
+    Layout = "~/Views/Shared/_NewAA7Layout.cshtml"; int sno = 0;
+}
+
+
+<div style="position:absolute; right:10px;top:10px">
+    <a class="btn btn-info float-right" href="javascript:history.back()" target="_top">Back</a>
+</div>
+
+<div class="row">
+
+    <input type="button" class="btn btn-info float-right"  id="btnExport" value="Export Pdf" /> 
+    
+</div>
+<body>
+    <div class="card-body" id="printDetails">
+
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+
+                <tbody id="tbody">
+                    <tr>
+                        <th colspan="5">
+                            <h5> Aviator Details : &nbsp;&nbsp;&nbsp;   @ViewBag.AviatorName    </h5>
+                        </th>
+                        <td>
+                            <h5>Unit Name: @ViewBag.UnitName</h5>
+                        </td>
+
+                    </tr>
+
+                    @if (ViewBag.ILAviatorCRUDCount > 0)
+                    {
+                        foreach (var item in Model.ILAviatorCRUD)
+                        {
+
+
+                            <tr>
+                                <td>
+                                    <b> Aviator Name</b>
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.AviatorName)</td>
+                                <td>
+                                    <b> Arms Service Name</b>
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.ArmServiceName)</td>
+                                <td>
+                                    <b>  Aircraft Name</b>
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.AircraftName)</td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    <b> Unit Name</b>
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.UnitName)</td>
+                                <td>
+                                    <b> Date of Birth</b>
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.DateOfBirth)</td>
+                                <td>
+                                    <b>  Date Of Seniority</b>
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.DateOfSeniority)</td>
+
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <b> Date Of Wings</b>
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.DateOfWings)</td>
+                                <td>
+                                    <b> Cat Card No</b>
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.CatCardNo)</td>
+                                <td>
+                                    <b>  Date of Issue Cat Card</b>
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.DateofIssueCatCard)</td>
+
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <b> Date Of Commision</b>
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.DateOfCommision)</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="4" style="font-weight:600;color:red;text-align:center"> No Record Found!!!</td></tr>
+                    }
+                </tbody>
+
+
+                <tbody id="tbody">
+                    <tr>
+                        <th colspan="6">
+                            <h5> Aviator Contact Details</h5>
+                        </th>
+
+                    </tr>
+                    @if (ViewBag.ILAviatorContactDetailsCount > 0)
+                    {
+
+
+                        foreach (var item in Model.ILAviatorContactDetailsCRUD)
+                        {
+
+
+                            <tr>
+                                <td><b>Mobile No /LandLine No </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.MobileNo) <span>/</span> @Html.DisplayFor(modelItem => item.LandLineNo)</td>
+                                <td><b>NOK </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.NOK)</td>
+                                <td><b>Relation With Nok	 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.RelationWithNok)</td>
+                            </tr>
+                            <tr>
+                                <td><b>Marital Status	 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.MaritalStatus)</td>
+                                <td><b>Name Of Spouse	 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.NameOfSpouse)</td>
+                                <td><b>Contact No Of Spouse		 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.ContactNoOfSpouse)</td>
+                            </tr>
+
+                            <tr>
+                                <td><b>Email Of Spouse		 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.EmailOfSpouse)</td>
+                                <td><b>Residental HouseNo		 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.ResidentalHouseNo)</td>
+                                <td><b>Residental Village_Street		 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.ResidentalVillage_Street)</td>
+                            </tr>
+                            <tr>
+                                <td><b>Residental PostOffice		 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.ResidentalPostOffice)</td>
+                                <td><b>Residental Tehsil	 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.ResidentalTehsil)</td>
+                                <td><b>Residental District		 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.ResidentalDistrict)</td>
+                            </tr>
+                            <tr>
+                                <td><b>Residental State		 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.ResidentalState)</td>
+                                <td><b>Residental Pincode	 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.ResidentalPincode)</td>
+                                <td><b>Permanent HouseNo		 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.PermanentHouseNo)</td>
+                            </tr>
+
+                            <tr>
+                                <td><b>Permanent Village_Street		 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.PermanentVillage_Street)</td>
+                                <td><b>Permanent PostOffice	 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.PermanentPostOffice)</td>
+                                <td><b>Permanent Tehsil			 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.PermanentTehsil)</td>
+                            </tr>
+                            <tr>
+                                <td><b>Permanent District	 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.PermanentDistrict)</td>
+                                <td><b>Permanent State			 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.PermanentState)</td>
+                                <td><b>Permanent Pincode		 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.PermanentPincode)</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="6" style="font-weight:600;color:red;text-align:center"> No Record Found!!!</td></tr>
+                    }
+                </tbody>
+
+                <tbody id="tbody">
+                    <tr>
+                        <th colspan="6">
+                            <h5> Aviator Course Details</h5>
+                        </th>
+
+                    </tr>
+
+                    @if (ViewBag.ILAviatorCoursesCount > 0)
+                    {
+                        foreach (var item in Model.ILAviatorCoursesCRUD)
+                        {
+
+
+                            <tr>
+                                <td><b>Course Name	 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.CourseName)</td>
+                                <td><b>Course Serial Number		 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.CourseSerialNumber)</td>
+                                <td><b>Course Start Date	 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.CourseStartDate)</td>
+                            </tr>
+
+
+                            <tr>
+                                <td><b>Course End Date	 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.CourseEndDate)</td>
+                                <td><b>Course Institute	Name </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.CourseInstitute)</td>
+                                <td><b>Course Place	 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.CoursePlace)</td>
+
+                            </tr>
+                            <tr>
+
+                                <td><b>Special Award </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.Special_Award)</td>
+                                <td><b>Course Grading	 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.CourseGrading)</td>
+                                <td><b>Notes	 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.Notes)</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="6" style="font-weight:600;color:red;text-align:center"> No Record Found!!!</td></tr>
+                    }
+                </tbody>
+
+
+                <tbody id="tbody">
+                    <tr>
+                        <th colspan="6">
+                            <h5> Aviator Honour Awards Details</h5>
+                        </th>
+
+                    </tr>
+                    @if (ViewBag.ILAviatorHonourAwardsCount > 0)
+                    {
+                        foreach (var item in Model.ILAviatorHonourAwardsCRUD)
+                        {
+
+
+                            <tr>
+                                <td><b>Honour Award Name	 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.HonourAwardName)</td>
+                                <td><b>Honour Awards Date </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.HonourAwardsDate)</td>
+                                <td><b>Honour Awards Place	 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.HonourAwardsPlace)</td>
+
+                            </tr>
+
+                            <tr>
+                                <td><b>Remarks	 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.Remarks)</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+
+
+                            </tr>
+
+
+
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="6" style="font-weight:600;color:red;text-align:center"> No Record Found!!!</td></tr>
+                    }
+                </tbody>
+
+                <tbody id="tbody">
+                    <tr>
+                        <th colspan="6">
+                            <h5> Aviator Flying Hrs Details</h5>
+                        </th>
+
+                    </tr>
+                    @if (ViewBag.ILAviatorFlyingHrsCount > 0)
+                    {
+                        foreach (var item in Model.ILAviatorFlyingHrsCRUD)
+                        {
+                            <tr>
+                                <td><b>Aircraft Name	 </b></td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.AircraftName)
+                                </td>
+                                <td><b>Day Dual Hrs </b></td>
+                                <td>  @item.ConvertFlyingHrs(item.DayDualHrs) </td>
+                                <td><b>Day Solo Hrs </b></td>
+                                <td>@item.ConvertFlyingHrs(item.DaySoloHrs)</td>
+
+                            </tr>
+
+                            <tr>
+                                <td><b>Day Copilot Hrs </b></td>
+                                <td>  @item.ConvertFlyingHrs(item.DayCopilotHrs)</td>
+                                <td><b>Night Dual Hrs </b></td>
+                                <td> @item.ConvertFlyingHrs(item.NightDualHrs) </td>
+                                <td><b>Night Solo Hrs </b></td>
+                                <td> @item.ConvertFlyingHrs(item.NightSoloHrs)</td>
+                            </tr>
+                            <tr>
+                                <td><b>Night Copilot Hrs </b></td>
+                                <td>@item.ConvertFlyingHrs(item.NightCopilotHrs)</td>
+                                <td><b>NVG Exp </b></td>
+                                <td>@item.ConvertFlyingHrs(item.NVGExp)</td>
+                                <td><b>WSO Exp </b></td>
+                                <td>@item.ConvertFlyingHrs(item.WSOExp)</td>
+                            </tr>
+                            <tr>
+                                <td><b>IF Actual </b></td>
+                                <td>@item.ConvertFlyingHrs(item.IF_Actual)</td>
+                                <td><b>Instr Day Hrs </b></td>
+                                <td>@item.ConvertFlyingHrs(item.InstrDayHrs)</td>
+                                <td><b>Instr Night Hrs </b></td>
+                                <td>@item.ConvertFlyingHrs(item.InstrNightHrs)</td>
+                            </tr>
+                            <tr>
+                                <td><b>IMC Hrs </b></td>
+                                <td>@item.ConvertFlyingHrs(item.IMCHrs)</td>
+                                <td><b>SIF Hrs </b></td>
+                                <td>@item.ConvertFlyingHrs(item.SIFHrs)</td>
+                                <td><b>ALH Sml Hrs </b></td>
+                                <td>@item.ConvertFlyingHrs(item.ALHSmlHrs)</td>
+                            </tr>
+                            <tr>
+                                <td><b>Month Year </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.ListYear)</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="6" style="font-weight:600;color:red;text-align:center"> No Record Found!!!</td></tr>
+                    }
+                </tbody>
+
+
+                <tbody id="tbody">
+                    <tr>
+                        <th colspan="6">
+                            <h5> Aviator Spl Eqpt Details</h5>
+                        </th>
+
+                    </tr>
+                    @if (ViewBag.ILAviatorSpecialEqptCount > 0)
+                    {
+                        foreach (var item in Model.ILAviatorSpecialEqptCRUD)
+                        {
+
+
+                            <tr>
+                                <td>
+                                    <b>Special Eqpt Qualification</b>
+                                </td>
+
+                                <td>@Html.DisplayFor(modelItem => item.SpecialEqptName)</td>
+                                <td>
+                                    <b> Qualification Date</b>
+                                </td>
+
+                                <td>@Html.DisplayFor(modelItem => item.SpecialEqptDate)</td>
+                                <td></td>
+                                <td></td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="6" style="font-weight:600;color:red;text-align:center"> No Record Found!!!</td></tr>
+                    }
+                </tbody>
+
+
+
+                <tbody id="tbody">
+                    <tr>
+                        <th colspan="6">
+                            <h5> Aviator Special Pilot Qualification Details</h5>
+                        </th>
+
+                    </tr>
+                    @if (ViewBag.ILAviatorSpecialQualCount > 0)
+                    {
+                        foreach (var item in Model.ILAviatorSpecialQualCRUD)
+                        {
+
+
+                            <tr>
+                                <td>
+                                    <b>Special Pilot Qualification</b>
+                                </td>
+
+                                <td>@Html.DisplayFor(modelItem => item.SpecialQualName)</td>
+                                <td>
+                                    <b> Qualification Date</b>
+                                </td>
+
+                                <td>@Html.DisplayFor(modelItem => item.SpecialQualDate)</td>
+                                <td></td>
+                                <td></td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="6" style="font-weight:600;color:red;text-align:center"> No Record Found!!!</td></tr>
+                    }
+                </tbody>
+
+                <tbody id="tbody">
+                    <tr>
+                        <th colspan="6">
+                            <h5> Aviator Medical Details</h5>
+                        </th>
+
+                    </tr>
+                    @if (ViewBag.ILAviatorMedicalCRUDCount > 0)
+                    {
+                        foreach (var item in Model.ILAviatorMedicalCRUD)
+                        {
+
+                            <tr>
+                                <td><b>Type Of Medical  </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.TypeOfMedical)</td>
+                                <td><b>Medical Start Date </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.MedicalStartDate)</td>
+                                <td><b>Medical End Date	 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.MedicalEndDate)</td>
+                            </tr>
+                            <tr>
+                                <td><b>Medical Cat		 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.MedicalCat)</td>
+                                <td><b>Medical Cat Date	 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.MedicalCatDate)</td>
+                                <td><b>Duration In Weeks	 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.DurationInWeeks)</td>
+                            </tr>
+                            <tr>
+                                <td><b>ReCat Due Date	    </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.ReCatDueDate)</td>
+                                <td><b>Medical Status    </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.MedicalStatus)</td>
+                                <td><b>Remarks			 </b></td>
+                                <td>@Html.DisplayFor(modelItem => item.Remarks)</td>
+
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="6" style="font-weight:600;color:red;text-align:center"> No Record Found!!!</td></tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+        <form action="~/Home/Upload" method="post" id="myForm">
+            <input type="hidden" name="data1" id="data1">
+            <input type="hidden" name="filename" id="filename" value="AviatorDetails">           
+        </form>
+    </div>
+</body>
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/pdfmake.min.js"></script>
+<script src="~/Scripts/html2canvas.min.js"></script>
+<script>
+    $("body").on("click", "#btnExport", function () {
+        debugger;
+            html2canvas($('#printDetails')[0], {
+                onrendered: function (canvas) {
+                    var data = canvas.toDataURL();
+                    var docDefinition = {
+                        content: [{
+                            image: data,
+                            width: 500
+                        }]
+                    };                   
+                    // pdfMake.createPdf(docDefinition).download("Aviator.pdf");
+                    const pdfDocGenerator = pdfMake.createPdf(docDefinition);
+                    pdfDocGenerator.getBase64((data) => {
+                        $('#data1').val(data);
+                        $("#myForm").submit();
+                    });
+                }
+            });
+        });
+
+   
+</script>
+
+
+

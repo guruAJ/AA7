@@ -1,0 +1,440 @@
+﻿
+@model IHSDC.WebApp.Models.AviatorContactDetailsCRUD
+@using IHSDC.WebApp.Connection
+
+@{
+
+    var message = TempData["Message"] ?? string.Empty;
+    var messageStatus = TempData["messageStatus"] ?? string.Empty;
+    var messagemidStatus = TempData["messagemidStatus"] ?? string.Empty;
+
+    ViewBag.Title = " Aviator Contact Details ";
+    Layout = "~/Views/Shared/_NewAA7Layout.cshtml"; int sno = 0;
+}
+
+@*<div class="row">
+    <div class="col">
+        </div>
+</div>
+<br />*@
+
+
+@using (Html.BeginForm("AddAviatorContactDetails", "AA7", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+
+    <div class="card-body">
+        @if (Convert.ToString(SessionManager.Role) == "Unit" || Convert.ToString(SessionManager.Role) == "SecondInCommand" && ViewBag.ButtonName == "Update" || Convert.ToString(SessionManager.Role) == "FlightCommander" && ViewBag.ButtonName == "Update")
+        {
+            <div class="row">
+                <div class="col">
+                    <label><b> Aviator Name</b></label>
+                    @Html.DropDownListFor(m => m.Aviator_ID, (new IHSDC.WebApp.Models.MasterModels()).LoadAviatorName(), "--Select Aviator  Name --", new { @data_show_subtext = "true", @class = "select form-control", @data_live_search = "true", @required = true, @maxlength = "30" })
+                </div>
+
+                <div class="col">
+                    <label><b> Mobile No</b></label>
+                    @Html.TextBoxFor(m => m.MobileNo, new { @class = "form-control", @required = true, @onkeypress = "return blockSpecialChar(event)", @maxlength = "10" })
+                </div>
+                <div class="col">
+                    <label><b> Alternate Mobile No</b></label>
+                    @Html.TextBoxFor(m => m.LandLineNo, new { @class = "form-control", @required = true, @onkeypress = "return blockSpecialChar(event)", @maxlength = "10" })
+                </div>
+                <div class="col">
+                    <label><b> Name of NoK</b></label>
+                    @Html.TextBoxFor(m => m.NOK, new { @class = "form-control", @required = true, @onchange = "Case(this)" , @onkeypress = "return onlyAlph(event)", @maxlength = "30" })
+                </div>
+                <div class="col">
+                    <label><b> Relation With NoK</b></label>
+                    @Html.DropDownListFor(m => m.RelationWithNok, (new IHSDC.WebApp.Models.MasterModels()).LoadNokRelationship(), "--Select Relation --", new { @data_show_subtext = "true", @class = "select form-control", @data_live_search = "true", @required = true, @maxlength = "30" })
+                </div>
+
+
+                <div class="col">
+                    <label><b> Marital Status</b></label>
+                    @Html.DropDownListFor(m => m.MaritalStatus, (new IHSDC.WebApp.Models.MasterModels()).LoadMartialStatus(), "--Select Marital Status --", new { @data_show_subtext = "true", @class = "select form-control", @data_live_search = "true", @required = true, @onchange = "CheckMaritalStatus(this)" })
+
+                </div>
+            </div>
+            <br />
+            <p>
+                <button class="btn btn-secondary btn-lg btn-block" id="col1" type="button" data-toggle="collapse" data-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample" style="background-image: linear-gradient( #81d4fa , #212529);opacity: 0.8">
+                    NOK & SPOUSE DETAILS
+                </button>
+            </p>
+            <div class="collapse" id="collapseExample1">
+                <div class="card card-body">
+                    <div class="row">
+                        <div class="col">
+                            <label><b>Name of Spouse</b></label>
+                            @Html.TextBoxFor(m => m.NameOfSpouse, new { @class = "form-control", @onchange = "Case(this)", @onkeypress = "return onlyAlph(event)", @maxlength = "30" })
+                        </div>
+
+
+                        <div class="col">
+                            <label><b>Mobile No of Spouse</b></label>
+                            @Html.TextBoxFor(m => m.ContactNoOfSpouse, new { @class = "form-control", @onkeypress = "return blockSpecialChar(event)", @maxlength = "10" })
+                        </div>
+                        <div class="col">
+                            <label><b> Email ID of Spouse</b></label>
+                            @Html.TextBoxFor(m => m.EmailOfSpouse, new { @class = "form-control", onblur = "validateEmail(this)" })
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <p>
+                <button class="btn btn-secondary btn-lg btn-block" id="col2" type="button" data-toggle="collapse" data-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample" style="background-image: linear-gradient( #81d4fa, #212529);opacity: 0.8">
+                    Residential Address
+                </button>
+            </p>
+            <div class="collapse" id="collapseExample2">
+                <div class="card card-body">
+                    <div class="row">
+                        <div class="col">
+                            <label><b> House No</b></label>
+                            @Html.TextBoxFor(m => m.ResidentalHouseNo, new { @class = "form-control", @required = true, @maxlength = "30", @onkeypress = "return onlyAlph(event)" })
+                        </div>
+                        <div class="col">
+                            <label><b>Village/Street</b></label>
+                            @Html.TextBoxFor(m => m.ResidentalVillage_Street, new { @class = "form-control", @required = true, @maxlength = "30", @onkeypress = "return onlyAlphaNumeric(event)" })
+                        </div>
+                        <div class="col">
+                            <label><b>Post Office</b></label>
+                            @Html.TextBoxFor(m => m.ResidentalPostOffice, new { @class = "form-control", @required = true, @maxlength = "30", @onkeypress = "return onlyAlphaNumeric(event)" })
+                        </div>
+                        <div class="col">
+                            <label><b>Tehsil</b></label>
+                            @Html.TextBoxFor(m => m.ResidentalTehsil, new { @class = "form-control", @required = true, @maxlength = "30", @onkeypress = "return onlyAlph(event)" })
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="col">
+                            <label><b>District</b></label>
+                            @Html.TextBoxFor(m => m.ResidentalDistrict, new { @class = "form-control", @required = true, @onkeypress = "return onlyAlph(event)" })
+                        </div>
+                        <div class="col">
+                            <label><b> State</b></label>
+                            @Html.TextBoxFor(m => m.ResidentalState, new { @class = "form-control", @required = true, @onkeypress = "return onlyAlph(event)" })
+                        </div>
+                        <div class="col">
+                            <label><b>Pincode</b></label>
+                            @Html.TextBoxFor(m => m.ResidentalPincode, new { @class = "form-control", @required = true, @onkeypress = "return blockSpecialChar(event)", @maxlength = "6" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p>
+                <button class="btn btn-secondary btn-lg btn-block" id="col3" type="button" data-toggle="collapse" data-target="#collapseExample3" aria-expanded="false" aria-controls="collapseExample" style="background-image: linear-gradient( #81d4fa, #212529);opacity: 0.8">
+                    Permanent Address
+                </button>
+            </p>
+            <div class="collapse" id="collapseExample3">
+                <div class="card card-body">
+                    <div class="row">
+                        <div class="col">
+                            <label><b> House No</b></label>
+                            @Html.TextBoxFor(m => m.PermanentHouseNo, new { @class = "form-control", @required = true, @maxlength = "30", @onkeypress = "return onlyAlphaNumeric(event)" })
+                        </div>
+                        <div class="col">
+                            <label><b>Village/Street</b></label>
+                            @Html.TextBoxFor(m => m.PermanentVillage_Street, new { @class = "form-control", @required = true, @maxlength = "30", @onkeypress = "return onlyAlphaNumeric(event)" })
+                        </div>
+                        <div class="col">
+                            <label><b>Post Office</b></label>
+                            @Html.TextBoxFor(m => m.PermanentPostOffice, new { @class = "form-control", @required = true, @maxlength = "30", @onkeypress = "return onlyAlphaNumeric(event)" })
+                        </div>
+                        <div class="col">
+                            <label><b> Tehsil</b></label>
+                            @Html.TextBoxFor(m => m.PermanentTehsil, new { @class = "form-control", @required = true, @onkeypress = "return onlyAlph(event)" })
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label><b>District</b></label>
+                            @Html.TextBoxFor(m => m.PermanentDistrict, new { @class = "form-control", @required = true, @maxlength = "30", @onkeypress = "return onlyAlph(event)" })
+                        </div>
+                        <div class="col">
+                            <label><b> State</b></label>
+                            @Html.TextBoxFor(m => m.PermanentState, new { @class = "form-control", @required = true, @maxlength = "30", @onkeypress = "return onlyAlph(event)" })
+                        </div>
+                        <div class="col">
+                            <label><b>Pincode</b></label>
+                            @Html.TextBoxFor(m => m.PermanentPincode, new { @class = "form-control", @required = true, @onkeypress = "return blockSpecialChar(event)", @maxlength = "6" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+   
+
+
+                <div class="row" style="margin-bottom: 13px;margin-top: -44px;">
+                    <div class="col-10"></div>
+                    <div class="col" style="margin-top:2.5%;text-align:center">
+                        <button type="submit" value="@ViewBag.ButtonName" name="btnval" class="btn btn-success">@ViewBag.ButtonName</button>
+                        <a class="btn btn-info float-right" href="@Url.Action("Index","Home")" target="_top">
+                            Back
+                        </a>
+                    </div>
+
+                </div>
+
+
+
+
+
+
+
+
+        }
+
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="center">S/No</th>
+                        <th class="center">Aviator Name</th>
+                        <th class="center">Unit Name</th>
+                        <th class="center">Mobile No			    </th>
+                        <th class="center">LandLine No				</th>
+                        <th class="center">NOK						</th>
+                        <th class="center">Relation With Nok		</th>
+                        <th class="center">Marital Status			</th>
+                        <th class="center">Name Of Spouse			</th>
+                        @*<th class="center">Contact No Of Spouse		</th>
+                        <th class="center">Email Of Spouse			</th>
+                        <th class="center">Residental HouseNo		</th>
+                        <th class="center">Residental Village_Street</th>
+                        <th class="center">Residental PostOffice	</th>
+                        <th class="center">Residental Tehsil		</th>
+                        <th class="center">Residental District		</th>
+                        <th class="center">Residental State			</th>
+                        <th class="center">Residental Pincode		</th>
+                        <th class="center">Permanent HouseNo		</th>
+                        <th class="center">Permanent Village_Street	</th>
+                        <th class="center">Permanent PostOffice		</th>
+                        <th class="center">Permanent Tehsil			</th>
+                        <th class="center">Permanent District		</th>
+                        <th class="center">Permanent State			</th>
+                        <th class="center">Permanent Pincode		</th>*@
+
+
+                        @if (Convert.ToString(SessionManager.Role) == "Unit" || Convert.ToString(SessionManager.Role) == "SecondInCommand" || Convert.ToString(SessionManager.Role) == "FlightCommander")
+                        {
+                            <th class="center" width="100px"> Actions </th>
+
+                            <th class="center"> Status</th>
+                        }
+                        <th class="center">View		</th>
+
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    @if (ViewBag.count > 0)
+                    {
+                        foreach (var item in Model.ILAviatorContactDetailsCRUD)
+                        {
+                    <tr>
+                        <td>
+                            @{ sno++; }
+                            @sno
+                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.AviatorName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.UnitName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.MobileNo)</td>
+                        <td>@Html.DisplayFor(modelItem => item.LandLineNo)</td>
+                        <td>@Html.DisplayFor(modelItem => item.NOK)</td>
+                        <td>@Html.DisplayFor(modelItem => item.RelationWithNok)</td>
+                        <td>@Html.DisplayFor(modelItem => item.MaritalStatus)</td>
+                        <td>@Html.DisplayFor(modelItem => item.NameOfSpouse)</td>
+                        @*<td>@Html.DisplayFor(modelItem => item.ContactNoOfSpouse)</td>
+                        <td>@Html.DisplayFor(modelItem => item.EmailOfSpouse)</td>
+                        <td>@Html.DisplayFor(modelItem => item.ResidentalHouseNo)</td>
+                        <td>@Html.DisplayFor(modelItem => item.ResidentalVillage_Street)</td>
+                        <td>@Html.DisplayFor(modelItem => item.ResidentalPostOffice)</td>
+                        <td>@Html.DisplayFor(modelItem => item.ResidentalTehsil)</td>
+                        <td>@Html.DisplayFor(modelItem => item.ResidentalDistrict)</td>
+                        <td>@Html.DisplayFor(modelItem => item.ResidentalState)</td>
+                        <td>@Html.DisplayFor(modelItem => item.ResidentalPincode)</td>
+                        <td>@Html.DisplayFor(modelItem => item.PermanentHouseNo)</td>
+                        <td>@Html.DisplayFor(modelItem => item.PermanentVillage_Street)</td>
+                        <td>@Html.DisplayFor(modelItem => item.PermanentPostOffice)</td>
+                        <td>@Html.DisplayFor(modelItem => item.PermanentTehsil)</td>
+                        <td>@Html.DisplayFor(modelItem => item.PermanentDistrict)</td>
+                        <td>@Html.DisplayFor(modelItem => item.PermanentState)</td>
+                        <td>@Html.DisplayFor(modelItem => item.PermanentPincode)</td>*@
+
+                        @if (Convert.ToString(SessionManager.Role) == "Unit" || Convert.ToString(SessionManager.Role) == "SecondInCommand" || Convert.ToString(SessionManager.Role) == "FlightCommander")
+                        {
+                            <td>
+                                @if (Convert.ToString(SessionManager.Role) == "Unit")
+                                {
+                                    if (item.Validation == null)
+                                    {
+                                        <a onclick="location.href='@Url.Action("AddAviatorContactDetails", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorDetailID.ToString()) })'">
+                                            <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                        </a><span>|</span>
+                                        <a id="btndel" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorDetailID.ToString())' onclick="DeleteConfirmation(this,'/AA7/DeleteAviatorContactDetails')">
+                                            <img src="~/images/Delete.png" width="30" height="30" border="0" />
+                                        </a><span>|</span>
+                                        <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorDetailID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorContactDetails','Do you want to Submit to 2IC ','SubmitClk')">
+                                            <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                        </a>
+                                    }
+                                    if (item.Validation == "Rejected by 2IC")
+                                    {
+                                        <a onclick="location.href='@Url.Action("AddAviatorContactDetails", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorDetailID.ToString()) })'">
+                                            <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                        </a><span>|</span>
+                                        <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorDetailID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorContactDetails','Do you want to Submit to 2IC ','SubmitClk')">
+                                            <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                        </a>
+                                    }
+
+                                }
+                                @if (Convert.ToString(SessionManager.Role) == "SecondInCommand")
+                                {
+
+                                    if (item.Validation == "Submitted to 2IC" || item.Validation == "Rejected by Flt Cdr")
+                                    {
+                                        <a onclick="location.href='@Url.Action("AddAviatorContactDetails", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorDetailID.ToString()) })'">
+                                            <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                        </a><span>|</span>
+                                        <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorDetailID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorContactDetails','Do you want to Submit to Flt Cdr','Validate2IC')">
+                                            <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                        </a>
+                                        <span>|</span>
+                                        <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorDetailID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorContactDetails','Do you want to Reject ','Reject2IC')">
+                                            <img src="~/images/Reject.png" width="30" height="30" border="0" />
+                                        </a>}
+
+                                }
+                                @if (Convert.ToString(SessionManager.Role) == "FlightCommander")
+                                {
+                                    if (item.Validation != "Rejected by Flt Cdr")
+                                    {
+
+
+                                        <a onclick="location.href='@Url.Action("AddAviatorContactDetails", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorDetailID.ToString()) })'">
+                                            <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                        </a><span>|</span>
+                                        <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorDetailID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorContactDetails','Do you want to Counter Validate','ValidateFltCdr')">
+                                            <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                        </a>
+                                        <span>|</span>
+                                        <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorDetailID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorContactDetails','Do you want to Reject ','RejectFltCdr')">
+                                            <img src="~/images/Reject.png" width="30" height="30" border="0" />
+                                        </a>
+                                        <span>|</span>
+                                        <a id="btndel" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorDetailID.ToString())' onclick="DeleteConfirmation(this,'/AA7/DeleteAviatorContactDetails')">
+                                            <img src="~/images/Delete.png" width="30" height="30" border="0" />
+                                        </a>
+                                    }
+                                }
+
+
+                            </td>
+                            <td>
+                                @if (Convert.ToString(SessionManager.Role) == "Unit")
+                                {
+
+                                    if (item.Validation != null)
+                                    {<label><b> @item.Validation</b></label>}
+
+                                if (item.CounterValidation != null)
+                                {<label><b>  @item.CounterValidation</b></label>}
+
+                            if (item.CounterValidation == null && item.Validation == null)
+                            {<label><b> New Data</b></label>}
+                        }
+
+                                @if (Convert.ToString(SessionManager.Role) == "SecondInCommand")
+                                {
+                                    if (item.CounterValidation != "Rejected by Flt Cdr")
+                                    {
+                                        if (item.Validation == "Submitted to 2IC")
+                                        {<label><b>  Submitted By Clk</b></label>}
+
+                                        if (item.CounterValidation == "Submitted to Flt Cdr")
+                                        {<label><b>  @item.CounterValidation</b></label>}
+
+                                    @*if (item.Validation == "Submitted to 2IC")
+                                    {<label><b>  Submitted By Clk</b></label>}*@
+                                }
+
+
+                                if (item.Validation == "Rejected by 2IC")
+                                {<label><b>  Rejected to Clk</b></label>}
+
+
+                            }
+
+
+
+                                @if (Convert.ToString(SessionManager.Role) == "FlightCommander")
+                                {
+                                    if (item.Validation == "Rejected by Flt Cdr")
+
+                                    {
+
+                                        <label><b> Rejected to 2IC</b></label>
+                                    }
+                                    else
+                                    {
+
+                                        <label><b> @item.Validation</b></label>
+
+                                    }
+                                }
+
+                            </td>}
+                        <td>
+                            <a onclick="location.href='@Url.Action("ViewAviatorDetails", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Aviator_ID.ToString()) })'">
+                                <i class="fa fa-eye" style="font-size:25px" aria-hidden="true"></i>
+                            </a>
+
+                        </td>
+                    </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="4" style="font-weight:600;color:red;text-align:center"> No Record Found!!!</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Content/CustomJS/DeleteConfirmation.js"></script>
+<script src="~/Content/CustomJS/AviatorJS.js"></script>
+<script src="~/Content/css/sweetalert.min.js"></script>
+<link href="~/Content/css/sweetalert.css" rel="stylesheet" />
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryui")
+    @Styles.Render("~/Content/cssjqryUi")
+
+    <script type="text/javascript">
+       var message = '@message';
+    var messageStatus = '@messageStatus';
+    var messagemidStatus = '@messagemidStatus ';
+    if (message)
+            sweetAlert(message, messagemidStatus, messageStatus);
+        $(document).ready(function () {
+            $("#col1").click();
+            $("#col2").click();
+            $("#col3").click();
+        })
+
+
+
+
+    </script>
+}
+

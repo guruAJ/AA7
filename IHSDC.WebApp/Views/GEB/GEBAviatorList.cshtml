@@ -1,0 +1,245 @@
+﻿
+
+@model IHSDC.WebApp.Models.LetterForwardedGEB
+@using IHSDC.WebApp.Connection
+@{
+
+    var message = TempData["Message"] ?? string.Empty;
+    var messageStatus = TempData["messageStatus"] ?? string.Empty;
+    var messagemidStatus = TempData["messagemidStatus"] ?? string.Empty;
+    ViewBag.Title = "Aviator For Appx D";
+    Layout = "~/Views/Shared/_NewAA7Layout.cshtml"; int sno = 0;
+}
+
+
+
+
+<div style="position:absolute; right:10px;top:10px">
+
+    
+    <a class="btn btn-info float-right" href="@Url.Action("UserGEBList","GEB")" target="_top">
+        Back
+    </a>
+</div>
+<div style="position:absolute; top:10px;left:20%;right:20%">
+    @*<a class="btn btn-info float-right" href="javascript:history.back()" target="_top">*@
+    <div style="text-align:center;font-size: 25px">
+     
+        <label><b>  @SessionManager.UnitName</b> </label>
+    </div>
+
+</div>
+<div class="card-body" id="lowzoom">
+
+
+
+    <div class="table-responsive">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+                <tr>
+
+                    <th class="center">S/No</th>
+                   
+                <th class="center" width="350px">Action</th>
+                    
+                <th class="center" width="350px">Aviator Name</th>
+                <th class="center" width="350px">Status</th>
+                <th class="center" width="350px">Apprear For</th>
+                @*<th class="center" width="350px">View</th>*@
+
+                </tr>
+
+            </thead>
+            <tbody id="tbody">
+                @if (ViewBag.count > 0)
+                {
+                    foreach (var item in Model.ILLetterForwardedGEB)
+                    {
+                        <tr>
+                            <td>
+                                @{ sno++; }
+                                @sno
+                            </td>
+                            <td>
+
+
+                                @if (SessionManager.Role == "SecondInCommand")
+    {
+                            <a class="btn btn-link" style="text-decoration:underline;color:#33b5e5" onclick="location.href='@Url.Action("EditGEBDetails", "GEB", new { fid = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.FinalAppxId.ToString()) })'">
+                                Edit
+                            </a>
+}
+
+
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.AviatorName)</td>
+
+                            @if (item.PresentCatIR != null && item.PresentCatIRType != null)
+                            {
+                                <td>
+                                    <label><b>Updated</b></label>
+
+                                    @if (item.IsRejectBrig == true)
+                                    {
+                                        <span>|</span>
+                                        <label><b>Rejected By Brig Avn</b></label>
+                                    }
+                                    @if (item.IsRejectGSO == true)
+                                    {
+                                        <span>|</span>
+                                        <label><b>Rejected By GSO1 AA7<</b></label>
+                                    }
+
+
+                                </td>
+                            }
+                            else
+                            {
+                                <td>
+                                    <label><b>Not Updated</b></label>
+                                </td>
+                            }
+
+
+                            <td><b>@Html.DisplayFor(modelItem => item.AppearingFor)</b></td>
+
+                            @*<td>
+                                <a class="btn btn-link" style="text-decoration:underline;color:#33b5e5" onclick="location.href='@Url.Action("GEBDetails", "GEB", new { fid = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.FinalAppxId.ToString()) })'">
+                                    View Details
+                                </a>
+                                <span>|</span>
+
+                                @if (SessionManager.Role == "FlightCommander")
+                                        {
+
+
+                                            if (item.PresentCatIR != null && item.PresentCatIRType != null) {
+                                    <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.FinalAppxId.ToString())' onclick="SubmitConfirmation(this,'/GEB/SubmitGEBListSqn','Do you want to Submit GEB List to Brig Avn','SubmitSqnCdr')">
+                                        <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                    </a>
+                                            }
+
+                                        }
+                            </td>*@
+
+
+                            @*<td>
+                                    <table>
+                                        <tr>
+
+                                            <th class="center">Present Cat IR </th>
+                                            <th class="center">Present Cat IR Date</th>
+                                            <th class="center">Present Cat IR Type</th>
+
+                                            <th class="center">TypesIfAny</th>
+                                            <th class="center">Specail Qualification</th>
+                                            <th class="center">Appearing For</th>
+                                            <th class="center">Day  Last 03 Month</th>
+                                            <th class="center">Night  Last 06 Month</th>
+                                            <th class="center">Total Inst </th>
+                                            <th class="center">Total Capt  Present Type Day</th>
+                                            <th class="center">Total Capt Present Type Night</th>
+                                            <th class="center">On Helicopter Day</th>
+                                            <th class="center">On Helicopter Night</th>
+                                            <th class="center">IMC Day </th>
+                                            <th class="center">IMC Night </th>
+                                            <th class="center">Capt Day On All Types</th>
+                                            <th class="center">Capt Night On All Types</th>
+                                            <th class="center">Aircraft Type</th>
+                                            <th class="center">QFI Cat</th>
+                                            <th class="center">QFI  Date</th>
+                                            <th class="center">Check Aviator Endorsment Awarded On</th>
+                                            <th class="center">Award By Comd</th>
+                                            <th class="center">Remarks Day</th>
+                                            <th class="center">Remarks Night</th>
+                                            <th class="center">Recom For Cat IR</th>
+                                            <th class="center">Remarks Appearing</th>
+                                        </tr>
+                                        <tr>
+
+
+                                            <td>@Html.DisplayFor(modelItem => item.PresentCatIR)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.PresentCatIRDate)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.PresentCatIRType)</td>
+
+                                            <td>@Html.DisplayFor(modelItem => item.TypesIfAny)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.SplQul)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.AppearingFor)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.DayHrsLastThreeMonth)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.NighHrsLastSixMonth)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.TotalInstHrs)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.TotalCptHrsPresentTypeDay)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.TotalCptHrsPresentTypeNight)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.OnHelicoptorDay)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.OnHelicoptornight)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.IMCDayHrs)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.IMCNightHrs)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.CaptHrsDayOnAllTypes)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.CaptHrsNightOnAllTypes)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.AircraftType)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.QfiCat)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.QfiDate)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.CheckAviatorEndorsmentAwardedOn)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.AwardByComd)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.RemarksDay)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.RemarksNight)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.RecomForCatIR)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.RemarksAppearing)</td>
+                                        </tr>
+
+                                    </table>
+
+                                </td>*@
+
+
+
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="4" style="font-weight:600;color:red;text-align:center"> No Record Found!!!</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+
+
+
+</div>
+
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Content/CustomJS/DeleteConfirmation.js"></script>
+<script src="~/Content/CustomJS/AviatorJS.js"></script>
+<script src="~/Content/css/sweetalert.min.js"></script>
+<link href="~/Content/css/sweetalert.css" rel="stylesheet" />
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryui")
+    @Styles.Render("~/Content/cssjqryUi")
+
+    <script type="text/javascript">
+
+	function blockSpecialChar(e) {
+		if ((e.which < 48 || e.which > 57) && e.which != 46) {
+			if (e.which == 8 || e.which == 0) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+
+
+			}
+		
+
+      var message = '@message';
+    var messageStatus = '@messageStatus';
+    var messagemidStatus = '@messagemidStatus ';
+    if (message)
+			sweetAlert(message, messagemidStatus, messageStatus);
+    </script>
+}

@@ -1,0 +1,213 @@
+﻿@model IHSDC.WebApp.Models.NominalRollForGEB
+@using IHSDC.WebApp.Connection
+@{
+    ViewBag.Title = "Appx D";
+    Layout = "~/Views/Shared/_NewAA7Layout.cshtml"; int sno = 0;
+}
+
+<div style="position:absolute; right:10px;top:10px">
+    <div class="col">
+        <a class="btn btn-info float-right" href="@Url.Action("GEBList","GEBExam")" target="_top">
+            Back
+        </a>
+    </div>
+</div>
+<div class="row">
+
+    <input type="button" class="btn btn-info float-right" id="btnExport" value="Export Pdf" />
+
+
+</div>
+<body>
+    <div class="page" id="printAppxG">
+
+        <div class="row">
+            <div class="col-12">
+
+            </div>
+        </div>
+        <div class="row  float-right">
+            <div class="col-12">
+                <b><u>Appendix D</u></b>
+                <br />
+                <b><span>(Refers to para 26 of SAO 2/S/200)</span></b>
+            </div>
+        </div>
+        <br />
+        <div class="row" style="margin-top: 33px;margin-left: 254px;">
+            <div class="col-12">
+                <span style="text-align:center"><b><u>VISIT OF THE GEB : NOMINAL ROLL OF AVIATORS : xxxxxx  ARMY AVN SQN (R&O)</u></b></span>
+            </div>
+        </div>
+        <br />
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr style="text-align:center">
+                        <th rowspan="3" style="padding-bottom: 183px;">Ser</th>
+
+                        <th rowspan="3" style="padding-bottom: 139px;">IC No.,Rank & Name</th>
+                        <th rowspan="3" style="padding-bottom: 139px;">Cat Card No</th>
+                        <th rowspan="3" style="padding-bottom: 139px;">Present Cat/IR & Date</th>
+                        <th rowspan="3" style="padding-bottom: 162px;">Special Qualification</th>
+                        <th rowspan="3" style="padding-bottom: 162px;">Appearing For</th>
+                        <th colspan="2" style="padding-bottom: 64px;">Con Trt details</th>
+                        <th colspan="3" style="padding-bottom: 41px;">Total Captain Hours (Day & Night )</th>
+                        <th rowspan="3" style="padding-bottom: 172px;">Total IMC</th>
+                        <th colspan="5" style="padding-bottom: 63px;">Exhibited Performance</th>
+                        <th colspan="3" style="padding-bottom: 63px;">Examiner Flow with</th>
+                        <th rowspan="3" style="padding-bottom: 168px;">Cat/IR Awarded</th>
+                        <th rowspan="3" style="padding-bottom: 143px;">Remarks(Appearing /nc appearing /on leave or course etc)</th>
+                    </tr>
+                    <tr style="text-align:center">
+
+                        <th rowspan="2" style="padding-bottom: 46px;">Day(last 03 months)</th>
+                        <th rowspan="2" style="padding-bottom: 46px;">Night(last 06 months)</th>
+                        <th rowspan="2" style="padding-bottom: 44px;">On present Type</th>
+                        <th rowspan="2" style="padding-bottom: 70px;">On Helicopters </th>
+                        <th rowspan="2" style="padding-bottom: 70px;">All Types</th>
+                        <th colspan="3">Flying </th>
+                        <th colspan="2">Ground Subjects</th>
+                        <th rowspan="2" style="padding-bottom:93px;">Day</th>
+                        <th rowspan="2" style="padding-bottom:70px;">Special Exercises</th>
+                        <th rowspan="2" style="padding-bottom:93px;">Night</th>
+
+
+                    </tr>
+                    <tr style="text-align:center">
+
+                        <th style="padding-bottom: 43px;">Day </th>
+                        <th style="padding-bottom: 18px;">Spl Exercises </th>
+                        <th style="padding-bottom: 42px;">Night </th>
+                        <th style="padding-bottom: 42px;">Flying </th>
+                        <th style="padding-bottom: 19px;">Special to Role/Supervision </th>
+
+                    </tr>
+
+                </thead>
+                <tbody id="tbody">
+                    @if (ViewBag.Units != null)
+                    {
+                        foreach (var u in ViewBag.Units)
+                        {
+                            <tr>
+                                <td colspan="8">
+                                    <span style="font-size: 20px;font-weight:bold">  Unit Name:   </span>     <b style="font-size: 20px; text-decoration: underline;">  @u</b>
+                                </td>
+                            </tr>
+
+                            foreach (var item in Model.ILLetterForwardedGEB.Where(x => x.UnitName == u))
+                            {
+                                <tr>
+                                    <td>
+                                        @{ sno++; }
+                                        @sno
+                                    </td>
+                                    <td>
+
+                                        <label><b>@item.AviatorName</b></label>
+                                    </td>
+                                    <td>
+
+                                        <label><b>@item.Col1</b></label>
+                                    </td>
+
+                                    <td>
+                                        <label><b>@item.PresentCatIR</b></label><br />
+                                        <label><b>@item.PresentCatIRDate</b></label>
+                                    </td>
+                                    <td>
+
+                                        <label><b>@item.SplQul</b></label>
+                                    </td>
+                                    <td>
+                                        <label><b>@item.AppearingFor</b></label>
+                                    </td>
+                                    <td>
+                                        <label><b>@item.ConvertFlyingHrs(item.DayHrsLastThreeMonth)</b></label>
+
+                                    </td>
+                                    <td>
+                                        <label><b>@item.ConvertFlyingHrs(item.NighHrsLastSixMonth)</b></label>
+                                    </td>
+                                    <td>
+                                        <label><b>@item.ConvertFlyingHrs(item.TotalCptHrsPresentTypeDay + item.TotalCptHrsPresentTypeNight)</b></label>
+                                    </td>
+                                    <td>
+                                        <label><b>@item.ConvertFlyingHrs(item.OnHelicoptorDay + item.OnHelicoptornight)</b></label>
+                                    </td>
+                                    <td>
+                                        <label><b>@item.ConvertFlyingHrs(item.CaptHrsDayOnAllTypes + item.CaptHrsNightOnAllTypes)</b></label>
+                                    </td>
+                                    <td>
+                                        <label><b>@item.ConvertFlyingHrs(item.IMCDayHrs + item.IMCNightHrs)</b></label>
+                                    </td>
+                                    <td><b></b></td>
+                                    <td><b></b></td>
+                                    <td><b></b></td>
+                                    <td><b></b></td>
+                                    <td><b></b></td>
+                                    <td><b></b></td>
+                                    <td><b></b></td>
+                                    <td><b></b></td>
+                                    <td><b>@item.PresentCatIR </b></td>
+                                    <td>
+                                        <b>
+                                            @if (item.RecomForCatIR != string.Empty || item.RecomForCatIR != null)
+                                            {
+                                                @item.RecomForCatIR
+                                            }
+                                            else
+                                            {
+                                                @item.RecomForCatIR
+                                                <span>|</span>
+                                                @item.RemarksAppearing
+                                            }
+                                        </b>
+                                    </td>
+                                </tr>
+
+                            }
+                        }
+                    }
+
+
+                </tbody>
+            </table>
+            <form action="~/Home/Upload" method="post" id="myForm">
+                <input type="hidden" name="data1" id="data1">
+                <input type="hidden" name="filename" id="filename" value="AppxD">
+
+            </form>
+
+        </div>
+    </div>
+</body>
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/pdfmake.min.js"></script>
+<script src="~/Scripts/html2canvas.min.js"></script>
+<script>
+    $("body").on("click", "#btnExport", function () {
+        html2canvas($('#printAppxG')[0], {
+            onrendered: function (canvas) {
+                var data = canvas.toDataURL();
+                var docDefinition = {
+                    content: [{
+                        image: data,
+                        width: 500
+                    }]
+                };
+               //pdfMake.createPdf(docDefinition).download("AppxD.pdf");
+                const pdfDocGenerator = pdfMake.createPdf(docDefinition);
+                pdfDocGenerator.getBase64((data) => {
+                    $('#data1').val(data);
+                    $("#myForm").submit();
+                });
+            }
+        });
+    });
+
+
+</script>
+
+

@@ -1,0 +1,340 @@
+﻿
+@model IHSDC.WebApp.Models.AviatorAccidentCRUD
+@using IHSDC.WebApp.Connection
+
+@{
+
+    var message = TempData["Message"] ?? string.Empty;
+    var messageStatus = TempData["messageStatus"] ?? string.Empty;
+    var messagemidStatus = TempData["messagemidStatus"] ?? string.Empty;
+    ViewBag.Title = "Aviator Accident Incident ";
+    Layout = "~/Views/Shared/_NewAA7Layout.cshtml"; int sno = 0;
+}
+
+<div class="row">
+    <div class="col">
+        <a class="btn btn-info float-right" href="@Url.Action("Index","Home")" target="_top">
+            Back
+        </a>
+    </div>
+</div>
+<br />
+@using (Html.BeginForm("AddAviatorAccident", "AA7", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="card-body">
+
+
+
+        @if (Convert.ToString(SessionManager.Role) == "SecondInCommand" || Convert.ToString(SessionManager.Role) == "FlightCommander" && ViewBag.ButtonName == "Update" || Convert.ToString(SessionManager.Role) == "SquadronCommander" && ViewBag.ButtonName == "Update")
+        {
+
+
+            <div class="row">
+                <div class="col">
+                    <label><b> Aviator Name</b></label>
+                    @Html.DropDownListFor(m => m.Aviator_ID, (new IHSDC.WebApp.Models.MasterModels()).LoadAviatorName(), "--Select Aviator  Name --", new { @data_show_subtext = "true", @class = "select form-control", @data_live_search = "true", @required = true })
+                </div>
+                <div class="col">
+                    <label><b> Aircraft Name</b></label>
+                    @Html.DropDownListFor(m => m.Aircraft_ID, (new IHSDC.WebApp.Models.MasterModels()).LoadAircraftName(), "--Select Aircraft Name --", new { @data_show_subtext = "true", @class = "select form-control", @data_live_search = "true", @required = true })
+                </div>
+                <div class="col">
+                    <label><b> Accident/Incident Cat</b></label>
+                    @Html.DropDownListFor(m => m.AccidentCat, (new IHSDC.WebApp.Models.MasterModels()).LoadAccidentCat(), "--Select Accident Cat Name --", new { @data_show_subtext = "true", @class = "select form-control", @data_live_search = "true", @required = true })
+                </div>
+
+                <div class="col">
+                    <label><b> Date Of Accident/Incident</b></label>
+                    @Html.TextBoxFor(m => m.DateOfAccidentIncident, new { type = "text", @class = "form-control", @required = true, @onchange = "isDate(this),checkDate(this)", @placeholder = "dd/mmm/yyyy as 02/Sep/2020" })
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label><b>Place Of Accident/Incident</b></label>
+                    @Html.TextBoxFor(m => m.PlaceOfAccidentIncident, new { @class = "form-control", @required = true, @OnChange = "Case(this)", @onkeypress = "return onlyAlph(event)" })
+                </div>
+                <div class="col">
+                    <label><b>Details Of Accident/Incident</b></label>
+                    @Html.TextBoxFor(m => m.DetailsOfAccidentIncident, new { @class = "form-control", @required = true, @OnChange = "Case(this)", @onkeypress = "return onlyAlph(event)" })
+                </div>
+                <div class="col">
+                    <label><b>Blameworthy</b></label>
+                    @Html.DropDownListFor(m => m.Blameworthy, (new IHSDC.WebApp.Models.MasterModels()).LoadBlameWorthy(), "--Select Blameworthy --", new { @data_show_subtext = "true", @class = "select form-control", @data_live_search = "true", @required = true })
+                </div>
+
+
+
+
+                <div class="col" style="margin-top:2%">
+
+                    <button type="submit" value="@ViewBag.ButtonName" name="btnval" class="btn btn-success">@ViewBag.ButtonName</button>
+                </div>
+
+            </div>
+        }
+        <div class="dropdown-divider"></div>
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="center">S/No</th>
+                        <th class="center">Aviator Name</th>
+                        <th class="center">Aircraft Name</th>
+                        <th class="center">Unit Name</th>
+                        <th class="center">Accident Cat</th>
+                        <th class="center">Date of Accident/Incident</th>
+                        <th class="center">Place of Accident/Incident</th>
+                        <th class="center">Detail of Accident/Incident</th>
+                        <th class="center">Blame Worthy</th>
+                        @if (Convert.ToString(SessionManager.Role) == "SecondInCommand" || Convert.ToString(SessionManager.Role) == "FlightCommander" || Convert.ToString(SessionManager.Role) == "SquadronCommander")
+                        {
+                            <th class="center" width="100px"> Actions </th>
+
+                            <th class="center"> Status</th>
+                        }
+                        <th>View</th>
+
+
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    @if (ViewBag.count > 0)
+                    {
+                        foreach (var item in Model.ILAviatorAccidentCRUD)
+                        {
+                            <tr>
+                                <td width="30px">
+                                    @{ sno++; }
+                                    @sno
+                                </td>
+                                <td width="200px">@Html.DisplayFor(modelItem => item.AviatorName)</td>
+                                <td>@Html.DisplayFor(modelItem => item.AircraftName)</td>
+                                <td>@Html.DisplayFor(modelItem => item.UnitName)</td>
+                                <td>@Html.DisplayFor(modelItem => item.AccidentCat)</td>
+                                <td>@Html.DisplayFor(modelItem => item.DateOfAccidentIncident)</td>
+                                <td>@Html.DisplayFor(modelItem => item.PlaceOfAccidentIncident)</td>
+                                <td>@Html.DisplayFor(modelItem => item.DetailsOfAccidentIncident)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Blameworthy)</td>
+
+
+                                @if (Convert.ToString(SessionManager.Role) == "SecondInCommand" || Convert.ToString(SessionManager.Role) == "FlightCommander" || Convert.ToString(SessionManager.Role) == "SquadronCommander")
+                                {
+
+                                    <td>
+                                        @if (Convert.ToString(SessionManager.Role) == "SecondInCommand")
+                                        {
+                                            if (item.Validation == null)
+                                            {
+                                                <a onclick="location.href='@Url.Action("AddAviatorAccident", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorAccidentIncident_ID.ToString()) })'">
+                                                    <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                                </a><span>|</span>
+                                                <a id="btndel" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorAccidentIncident_ID.ToString())' onclick="DeleteConfirmation(this,'/AA7/DeleteAviatorAccident')">
+                                                    <img src="~/images/Delete.png" width="30" height="30" border="0" />
+                                                </a><span>|</span>
+                                                <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorAccidentIncident_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorAccident','Do you want to Submit to Flt cdr ','Submit2IC')">
+                                                    <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                </a>
+                                            }
+                                            if (item.Validation == "Rejected by Flt Cdr")
+                                            {
+                                                <a onclick="location.href='@Url.Action("AddAviatorAccident", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorAccidentIncident_ID.ToString()) })'">
+                                                    <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                                </a><span>|</span>
+                                                <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorAccidentIncident_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorAccident','Do you want to ReSubmit to Flt Cdr ','Submit2IC')">
+                                                    <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                </a>
+                                            }
+                                            if (item.CounterValidation == "Rejected by Sqn Cdr")
+                                            {
+                                                <a onclick="location.href='@Url.Action("AddAviatorAccident", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorAccidentIncident_ID.ToString()) })'">
+                                                    <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                                </a>
+                                                <span>|</span>
+                                                <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorAccidentIncident_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorAccident','Do you want to ReSubmit to Sqn Cdr ','ReSubmit2IC')">
+                                                    <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                </a>
+
+                                            }
+                                        }
+                                        @if (Convert.ToString(SessionManager.Role) == "FlightCommander")
+                                        {
+                                            if (item.CounterValidation != "Submitted by Sqn Cdr")
+                                            {
+                                                if (item.Validation == "Submitted to Flt Cdr" || item.Validation == "Rejected by Sqn Cdr")
+                                                {
+                                                    <a onclick="location.href='@Url.Action("AddAviatorAccident", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorAccidentIncident_ID.ToString()) })'">
+                                                        <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                                    </a><span>|</span>
+                                                    if (SessionManager.UnitType == "NORMAL")
+                                                    {
+                                                        <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorAccidentIncident_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorAccident','Do you want to Submit to Sqn Cdr','ValidateFltCdr')">
+                                                            <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                        </a>
+                                                    }
+                                                    if (SessionManager.UnitType == "INDEPENDENT")
+                                                    {
+                                                        <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorAccidentIncident_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorAccident','Do you want to Validate ','ValidateFltCdrIndependent')">
+                                                            <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                        </a>
+                                                    }
+
+                                                    <span>|</span>
+                                                    <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorAccidentIncident_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorAccident','Do you want to Reject ','RejectFltCdr')">
+                                                        <img src="~/images/Reject.png" width="30" height="30" border="0" />
+                                                    </a>
+                                                }
+                                            }
+                                        }
+                                        @if (Convert.ToString(SessionManager.Role) == "SquadronCommander")
+                                        {
+                                            if (item.Validation != "Rejected by Sqn Cdr")
+                                            {
+
+                                                <a onclick="location.href='@Url.Action("AddAviatorAccident", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorAccidentIncident_ID.ToString()) })'">
+                                                    <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                                </a><span>|</span>
+                                                <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorAccidentIncident_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorAccident','Do you want to Counter Validate','ValidateSqnCdr')">
+                                                    <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                </a>
+                                                <span>|</span>
+                                                <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorAccidentIncident_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorAccident','Do you want to Reject ','RejectSqnCdr')">
+                                                    <img src="~/images/Reject.png" width="30" height="30" border="0" />
+                                                </a>
+                                                <span>|</span>
+                                                <a id="btndel" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorAccidentIncident_ID.ToString())' onclick="DeleteConfirmation(this,'/AA7/DeleteAviatorAccident')">
+                                                    <img src="~/images/Delete.png" width="30" height="30" border="0" />
+                                                </a>
+                                            }
+
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (Convert.ToString(SessionManager.Role) == "SecondInCommand")
+                                        {
+
+                                            if (item.Validation == "Submitted to Flt Cdr" || item.Validation == "Rejected by Flt Cdr")
+                                            {<label><b> @item.Validation</b></label>}
+
+                                        if (item.CounterValidation == "Submitted to Sqn Cdr")
+                                        {<label><b>  @item.CounterValidation</b></label>}
+
+                                    if (item.CounterValidation == null && item.Validation == null)
+                                    {<label><b> New Data</b></label>}
+                                    if (item.Validation == "Rejected by Sqn Cdr")
+                                    {<label><b>  @item.Validation</b></label>}
+
+                            }
+
+
+                                        @if (Convert.ToString(SessionManager.Role) == "FlightCommander")
+                                        {
+                                            if (item.Validation == "Validated by Flt Cdr" && item.CounterValidation == "Submitted to Sqn Cdr")
+                                            {
+
+                                                {<label><b>  @item.CounterValidation</b></label>}
+                                        }
+                                        if (item.Validation == "Submitted to Flt Cdr")
+                                        {<label><b>  Submitted By 2IC</b></label>}
+
+                                        if (item.Validation == "Rejected by Flt Cdr")
+                                        {<label><b>  @item.Validation</b></label>}
+                                    if (item.Validation == "Rejected by Sqn Cdr")
+                                    {<label><b>  @item.Validation</b></label>}
+
+
+
+
+
+
+                            }
+
+
+
+                                        @if (Convert.ToString(SessionManager.Role) == "SquadronCommander")
+                                        {
+
+                                            <label><b> @item.Validation</b></label>
+
+
+                                        }
+
+
+                                    </td>
+}
+
+                                <td>
+                                    <a onclick="location.href='@Url.Action("ViewAviatorDetails", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Aviator_ID.ToString()) })'">
+                                        <i class="fa fa-eye" style="font-size:25px" aria-hidden="true"></i>
+                                    </a>
+
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="4" style="font-weight:600;color:red;text-align:center"> No Record Found!!!</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+}
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Content/CustomJS/DeleteConfirmation.js"></script>
+<script src="~/Content/CustomJS/AviatorJS.js"></script>
+<script src="~/Content/css/sweetalert.min.js"></script>
+<link href="~/Content/css/sweetalert.css" rel="stylesheet" />
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryui")
+    @Styles.Render("~/Content/cssjqryUi")
+
+    <script type="text/javascript">
+       var message = '@message';
+    var messageStatus = '@messageStatus';
+    var messagemidStatus = '@messagemidStatus ';
+    if (message)
+			sweetAlert(message, messagemidStatus, messageStatus);
+
+        $('#DateOfAccidentIncident').datepicker({
+            uiLibrary: 'bootstrap4',
+            dateFormat: "dd/M/yy",
+            autoclose: true,
+            maxDate: today
+        });
+
+   
+
+
+        function checkDate(obj) {
+            debugger;
+            var a = $(obj).parent().children()[0]
+            var text = $(a).text();
+            Date.prototype.toShortFormat = function () {
+                var month_names = ["Jan", "Feb", "Mar",
+                    "Apr", "May", "Jun",
+                    "Jul", "Aug", "Sep",
+                    "Oct", "Nov", "Dec"];
+                var day = this.getDate();
+                var month_index = this.getMonth();
+                var year = this.getFullYear();
+                return "" + day + "/" + month_names[month_index] + "/" + year;
+            }
+            var today = new Date();
+            var getDate = $(obj).val();
+
+            if (today.toShortFormat() => getDate) {
+                sweetAlert(' ' + text + '  can not be greater then to date !', '', 'warning');
+                $(obj).val('');
+                $(obj).focus();
+
+            }
+
+
+        }
+
+
+    </script>
+}

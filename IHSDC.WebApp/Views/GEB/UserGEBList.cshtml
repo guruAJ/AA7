@@ -1,0 +1,578 @@
+﻿@model IHSDC.WebApp.Models.LetterForwardedGEB
+@using IHSDC.WebApp.Connection
+@{
+    var message = TempData["Message"] ?? string.Empty;
+    var messageStatus = TempData["messageStatus"] ?? string.Empty;
+    var messagemidStatus = TempData["messagemidStatus"] ?? string.Empty;
+    ViewBag.Title = "GEB Module";
+    Layout = "~/Views/Shared/_NewAA7Layout.cshtml"; int sno = 0;
+}
+<div style="position:absolute; right:10px;top:10px">
+    @*<a class="btn btn-info float-right" href="javascript:history.back()" target="_top">*@
+    <a class="btn btn-info float-right" href="@Url.Action("Index","Home")" target="_top">
+
+        Back
+    </a>
+</div>
+<div style="position:absolute; top:10px;left:20%;right:20%">
+    @*<a class="btn btn-info float-right" href="javascript:history.back()" target="_top">*@
+    <div style="text-align:center;font-size: 25px">
+
+        <label><b>  @SessionManager.UnitName</b> </label>
+    </div>
+</div>
+<div class="card-body" id="lowzoom">
+    <div class="table-responsive">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+                <tr>
+
+                    <th width="36px" class="center">S/No</th>
+                    <th class="center"> From Date</th>
+                    <th class="center"> To Date</th>
+                    <th class="center" width="309px"> GEB Letter</th>
+
+                    <th width="98px" class="center">Unit Name</th>
+                    <th class="center">Status</th>
+
+
+
+                    @if (Convert.ToString(SessionManager.Role) == "FlightCommander" || Convert.ToString(SessionManager.Role) == "SecondInCommand")
+                    {
+                        <th class="center">  Appx</th>
+
+                    }
+                    @if (Convert.ToString(SessionManager.Role) == "FlightCommander")
+                    {
+                        <th class="center"> Submit /Reject GEB </th>
+
+                    }
+                    @if (Convert.ToString(SessionManager.Role) == "SecondInCommand")
+                    {
+                        <th class="center">Create GEB For Aviators</th>
+                    }
+
+                </tr>
+            </thead>
+            <tbody id="tbody">
+                @if (ViewBag.count > 0)
+                {
+                    foreach (var item in Model.ILLetterForwardedGEB)
+                    {
+                        if (item.IsSubmit == true && item.IsNotification == false)
+                        {
+                            <tr>
+                                <td>
+                                    <b>
+                                        @{ sno++; }
+                                        @sno
+                                    </b>
+                                </td>
+                                <td><b>@Html.DisplayFor(modelItem => item.FromDate)</b></td>
+                                <td><b>@Html.DisplayFor(modelItem => item.ToDate)</b></td>
+                                <td> <label><b>Forwarded By GSO1 AA7</b></label>  </td>
+                                <td><b>@Html.DisplayFor(modelItem => item.UnitName)</b></td>
+                                <td>
+                                    <!--////////////////////// Status//////////////////-->
+                                    @if (Convert.ToString(SessionManager.Role) == "SecondInCommand")
+                                    {
+                                        if (SessionManager.UnitType == "NORMAL")
+                                        {
+
+                                            if (item.SubmitBy2IC == "GEB List Rejected by Flt Cdr")
+                                            {
+                                                <label><b>GEB List Rejected by Flt Cdr</b></label>
+
+                                            }
+
+                                            if (item.SubmitBy2IC == "GEB List Submitted by 2IC" && item.SubmitByFltCdr == string.Empty || item.SubmitByFltCdr == null)
+                                            {
+
+                                                <label><b>GEB List Submitted to Flt Cdr</b></label>
+                                            }
+
+                                            if (item.SubmitBy2IC == string.Empty || item.SubmitBy2IC == null)
+                                            {
+                                                <label><b>Please Put List For GEB</b></label>
+
+                                            }
+
+                                            if (item.SubmitByFltCdr == "GEB List Submitted by Flt Cdr" && item.SubmitSqnCdr == null)
+                                            {
+                                                <label><b>GEB List is Submitted to Sqn Cdr</b></label>
+
+                                            }
+                                            if (item.SubmitSqnCdr == "Submitted to Brig Avn")
+                                            {
+                                                <label><b> GEB List Submitted to Brig  Avn </b></label>
+                                            }
+                                        }
+
+                                        if (SessionManager.UnitType == "INDEPENDENT")
+                                        {
+                                            if (item.SubmitBy2IC == "GEB List Rejected by Flt Cdr")
+                                            {
+                                                <label><b>GEB List Rejected by Flt Cdr</b></label>
+
+                                            }
+                                            if (item.SubmitSqnCdr == "Submitted to Brig Avn")
+                                            {
+                                                <label><b> GEB List Submitted to Brig  Avn </b></label>
+                                            }
+
+
+                                        }
+
+
+
+                                        if (item.SubmitBy2IC == null)
+                                        {
+                                            <label><b>Pl put up GEB List</b></label>
+                                        }
+                                    }
+
+
+                                    @if (Convert.ToString(SessionManager.Role) == "FlightCommander")
+                                    {
+
+                                        if (SessionManager.UnitType == "NORMAL")
+                                        {
+
+                                            if (item.SubmitBy2IC == "GEB List Submitted by 2IC" && item.SubmitByFltCdr == null)
+                                            {
+
+                                                <label><b>GEB List Submitted by 2IC </b></label>
+                                            }
+
+
+                                            if (item.SubmitByFltCdr == "GEB List Submitted by Flt Cdr" && item.SubmitSqnCdr == null)
+                                            {
+
+                                                <label><b> GEB List Submitted to Sqn Cdr </b></label>
+                                            }
+
+                                            if (item.SubmitSqnCdr == "Submitted to Brig Avn")
+                                            {
+
+                                                <label><b> GEB List Submitted to Brig Avn </b></label>
+                                            }
+
+                                        }
+
+
+                                        if (SessionManager.UnitType == "INDEPENDENT")
+                                        {
+                                            if (item.SubmitBy2IC == "GEB List Submitted by 2IC" && item.SubmitByFltCdr == null)
+                                            {
+
+                                                <label><b>GEB List Submitted by 2IC </b></label>
+                                            }
+
+
+                                            if (item.SubmitSqnCdr == "Submitted to Brig Avn")
+                                            {
+
+                                                <label><b> GEB List Submitted to Brig Avn </b></label>
+                                            }
+                                        }
+
+                                        if (item.SubmitBy2IC == null)
+                                        {
+                                            <label><b>Pl put up GEB List</b></label>
+                                        }
+                                    }
+                                </td>
+
+
+                                <td>
+                                    <!--////////////////////// Appx   //////////////////-->
+                                    @if (Convert.ToString(SessionManager.Role) == "SecondInCommand")
+    {
+
+        if (item.SubmitBy2IC == string.Empty || item.SubmitBy2IC == "GEB List Rejected by Flt Cdr")
+        {
+                                <a class="btn btn-link" style="text-decoration:underline;color:#33b5e5" onclick="location.href='@Url.Action("GenrateAppx", "GEB", new { fid = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString()), type = "AppxC", unit = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.UnitName.ToString()) })'">
+                                    Appx
+                                </a>
+}
+}
+
+
+                                    @if (Convert.ToString(SessionManager.Role) == "FlightCommander" && item.SubmitBy2IC == "GEB List Submitted by 2IC" && item.SubmitByFltCdr == string.Empty)
+    {
+                                <a class="btn btn-link" style="text-decoration:underline;color:#33b5e5" onclick="location.href='@Url.Action("GenrateAppx", "GEB", new { fid = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString()), type = "AppxC", unit = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.UnitName.ToString()) })'">
+                                    Appx
+                                </a>
+                                <span>|</span>
+                                <a class="btn btn-link" style="text-decoration:underline;color:#33b5e5"  onclick="location.href='@Url.Action("GEBAviatorList", "GEB", new { id = "0", fid = "0" })'">
+                                    Appx D
+                                </a>
+
+}
+                                </td>
+
+
+                                <td>
+
+                                    @if (Convert.ToString(SessionManager.Role) == "SecondInCommand")
+                                    {
+                                        if (Convert.ToInt16(item.AvCount) == 0)
+                                        {
+                                            <a class="btn btn-outline-info" onclick="location.href='@Url.Action("GEBAviatorList", "GEB", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.LetterForwardedId.ToString()) ,fid="0"})'">
+                                                Create
+                                            </a>
+                                        }
+
+
+
+                                        if (Convert.ToInt16(item.AvCount) != 0)
+                                        {
+                                            if (item.SubmitBy2IC != "GEB List Submitted by 2IC")
+                                            {
+                                                <a class="btn btn-outline-info" onclick="location.href='@Url.Action("GEBAviatorList", "GEB", new { id = "0", fid = "0" })'">
+                                                    Appx D
+                                                </a>
+                                            }
+                                        }
+
+
+                                        if (Convert.ToInt16(item.AvCount) != 0)
+                                        {
+                                            if (item.SubmitBy2IC != "GEB List Submitted by 2IC")
+                                            {
+                                                <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.LetterForwardedId.ToString())' onclick="SubmitConfirmation(this,'/GEB/SubmitGEBList','Do you want to Submit GEB List to Flt Cdr','SubmitGEB2IC')">
+                                                    <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                </a>
+                                            }
+                                        }
+
+                                    }
+
+
+
+                                    @if (Convert.ToString(SessionManager.Role) == "FlightCommander")
+                                    {
+
+
+
+                                        if (item.SubmitBy2IC == "GEB List Submitted by 2IC")
+                                        {
+
+                                            if (item.SubmitBy2IC == "GEB List Submitted by 2IC" && item.SubmitByFltCdr == null || item.SubmitByFltCdr == string.Empty)
+                                            {
+                                                if (SessionManager.UnitType == "NORMAL")
+                                                {
+                                                    <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.LetterForwardedId.ToString())' onclick="SubmitConfirmation(this,'/GEB/SubmitGEBList','Do you want to Submit GEB List to Sqn Cdr','SubmitGEBFltCdr')">
+                                                        <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                    </a>
+                                                }
+                                                if (SessionManager.UnitType == "INDEPENDENT")
+                                                {
+                                                    <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.LetterForwardedId.ToString())' onclick="SubmitConfirmation(this,'/GEB/SubmitGEBList','Do you want to Submit GEB List to Brig Avn','INDEPENDENT')">
+                                                        <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                    </a>
+                                                }
+                                                <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.LetterForwardedId.ToString())' onclick="SubmitConfirmation(this,'/GEB/SubmitGEBList','Do you want to Reject GEB List to 2IC','RejectGEBFltCdr')">
+                                                    <img src="~/images/Reject.png" width="30" height="30" border="0" />
+                                                </a>
+
+                                            }
+                                        }
+                                        if (item.SubmitByFltCdr == "GEB List Rejected by Sqn Cdr")
+                                        {
+
+                                            <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.LetterForwardedId.ToString())' onclick="SubmitConfirmation(this,'/GEB/SubmitGEBList','Do you want to Submit GEB List to Sqn Cdr','SubmitGEBFltCdr')">
+                                                <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                            </a>
+                                            <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.LetterForwardedId.ToString())' onclick="SubmitConfirmation(this,'/GEB/SubmitGEBList','Do you want to Reject GEB List to 2IC','RejectGEBFltCdr')">
+                                                <img src="~/images/Reject.png" width="30" height="30" border="0" />
+                                            </a>
+
+                                        }
+                                    }
+                                </td>
+
+                            </tr>
+                        }
+                        if (item.IsSubmit == false && item.IsNotification == true)
+                        {
+                            <tr>
+                                <td>
+                                    <b>
+                                        @{ sno++; }
+                                        @sno
+                                    </b>
+                                </td>
+                                <td><b>@Html.DisplayFor(modelItem => item.FromDate)</b></td>
+                                <td><b>@Html.DisplayFor(modelItem => item.ToDate)</b></td>
+                                <td>
+                                    @if (item.IsNotification == true)
+                                    {
+                                        <label>
+                                            <b>
+                                                If You Have Any Aviator For GEB Then You  Can Create GEB Details And Send Your Base Comd
+                                            </b>
+                                        </label>
+                                    }
+                                </td>
+
+                                <td><b>@Html.DisplayFor(modelItem => item.UnitName)</b></td>
+                                <td>
+                                    @if (Convert.ToString(SessionManager.Role) == "SecondInCommand")
+                                    {
+                                        if (SessionManager.UnitType == "NORMAL")
+                                        {
+
+                                            if (item.SubmitBy2IC == "GEB List Rejected by Flt Cdr")
+                                            {
+                                                <label><b>GEB List Rejected by Flt Cdr</b></label>
+
+                                            }
+
+                                            if (item.SubmitBy2IC == "GEB List Submitted by 2IC" && item.SubmitByFltCdr == string.Empty || item.SubmitByFltCdr == null)
+                                            {
+
+                                                <label><b>GEB List Submitted to Flt Cdr</b></label>
+                                            }
+
+                                            if (item.SubmitBy2IC == string.Empty || item.SubmitBy2IC == null)
+                                            {
+                                                <label><b>Please Put List For GEB</b></label>
+
+                                            }
+
+                                            if (item.SubmitByFltCdr == "GEB List Submitted by Flt Cdr" && item.SubmitSqnCdr == null)
+                                            {
+                                                <label><b>GEB List is Submitted to Sqn Cdr</b></label>
+
+                                            }
+                                            if (item.SubmitSqnCdr == "Submitted to Brig Avn")
+                                            {
+                                                <label><b> GEB List Submitted to Brig  Avn </b></label>
+                                            }
+                                        }
+
+                                        if (SessionManager.UnitType == "INDEPENDENT")
+                                        {
+                                            if (item.SubmitBy2IC == "GEB List Rejected by Flt Cdr")
+                                            {
+                                                <label><b>GEB List Rejected by Flt Cdr</b></label>
+
+                                            }
+                                            if (item.SubmitSqnCdr == "Submitted to Brig Avn")
+                                            {
+                                                <label><b> GEB List Submitted to Brig  Avn </b></label>
+                                            }
+
+                                        }
+
+                                        if (item.SubmitBy2IC == null)
+                                        {
+                                            <label><b>Pl put up GEB List</b></label>
+                                        }
+                                    }
+                                    @if (Convert.ToString(SessionManager.Role) == "FlightCommander")
+                                    {
+                                        if (item.SubmitBy2IC == String.Empty)
+                                        {
+                                            <label><b> Pl put up GEB List </b></label>
+                                        }
+
+
+                                        if (item.SubmitSqnCdr == "Submitted to Brig Avn")
+                                        {
+                                            <label><b> GEB List Submitted to Brig  Avn </b></label>
+                                        }
+
+                                        if (item.SubmitBy2IC == "GEB List Submitted by 2IC" && item.SubmitByFltCdr == null || item.SubmitByFltCdr == string.Empty)
+                                        {
+
+                                            <label><b>@item.SubmitBy2IC </b></label>
+                                        }
+                                        if (item.SubmitByFltCdr == "GEB List Submitted by Flt Cdr" && SessionManager.UnitType == "NORMAL")
+                                        {
+
+                                            <label><b>GEB List Submitted to Sqn Cdr </b></label>
+                                        }
+
+                                        if (SessionManager.UnitType == "INDEPENDENT")
+                                        {
+                                            if (item.SubmitByFltCdr == "GEB List Submitted by Flt Cdr")
+                                            {
+                                                <label><b> GEB List Submitted to Brig Avn </b></label>
+                                            }
+
+                                        }
+                                        if (SessionManager.UnitType != "INDEPENDENT")
+                                        {
+
+                                            if (item.SubmitBy2IC == "GEB List Rejected by Flt Cdr")
+                                            {
+                                                <label><b>GEB List Rejected for 2IC  </b></label>
+                                            }
+                                            if (item.SubmitBy2IC == string.Empty || item.SubmitBy2IC == null)
+                                            {
+                                                <label><b>Please Put List For GEB</b></label>
+
+                                            }
+
+                                        }
+                                        if (item.SubmitByComd == "Completed")
+                                        {
+                                            <label><b>@item.SubmitByComd</b></label>
+                                        }
+
+
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (Convert.ToString(SessionManager.Role) == "SecondInCommand")
+                                    {
+                                        if (item.SubmitBy2IC == string.Empty && item.SubmitByFltCdr == string.Empty || item.SubmitBy2IC == null && item.SubmitByFltCdr == null)
+                                        {
+                                            if (Convert.ToInt16(item.AvCount) != 0 || Convert.ToString(SessionManager.Role) == "FlightCommander")
+                                            {
+                                                <a class="btn btn-link" style="text-decoration:underline;color:#33b5e5" onclick="location.href='@Url.Action("GenrateAppx", "GEB", new { fid = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString()), type = "AppxC", unit = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.UnitName.ToString()) })'">
+                                                    AppxC
+                                                </a>
+                                            }
+                                        }
+                                    }
+                                    @if (Convert.ToString(SessionManager.Role) == "FlightCommander")
+                                    {
+                                        if (item.SubmitBy2IC == "GEB List Submitted by 2IC" && item.SubmitByFltCdr == String.Empty)
+                                        {
+                                            <a class="btn btn-link" style="text-decoration:underline;color:#33b5e5" onclick="location.href='@Url.Action("GenrateAppx", "GEB", new { fid = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString()), type = "AppxC", unit = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.UnitName.ToString()) })'">
+                                                AppxC
+                                            </a>
+                                        }
+                                    }
+                                </td>
+
+                                <td>
+
+                                    @if (Convert.ToString(SessionManager.Role) == "SecondInCommand")
+                                    {
+                                        if (Convert.ToInt16(item.AvCount) == 0)
+                                        {
+                                            <a class="btn btn-outline-info" onclick="location.href='@Url.Action("AviatorListForNotifyUnit", "GEB", new { id = item.GEBLetterId, fid = "0" })'">
+                                                Aviotor
+                                            </a>
+
+
+                                            if (item.SubmitBy2IC == null)
+                                            {
+                                                <span>   &nbsp; &nbsp;|  &nbsp; &nbsp;</span>
+                                                <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.LetterForwardedId.ToString())' onclick="SubmitConfirmation(this,'/GEB/SubmitGEBList','Do you want to Submit GEB List to Flt Cdr','SubmitGEB2IC')">
+                                                    <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                </a>
+
+                                            }
+                                        }
+
+
+                                        if (Convert.ToInt16(item.AvCount) != 0)
+                                        {
+                                            if (item.SubmitBy2IC != "GEB List Submitted by 2IC")
+                                            {
+                                                <a class="btn btn-outline-info" onclick="location.href='@Url.Action("AviatorListForNotifyUnit", "GEB", new { id = item.GEBLetterId, fid = "0" })'">
+                                                    Aviotor
+                                                </a>
+                                                <span>   &nbsp; &nbsp;|  &nbsp; &nbsp;</span>
+                                                if (item.SubmitBy2IC == null || item.SubmitBy2IC == string.Empty)
+                                                {
+
+                                                    <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.LetterForwardedId.ToString())' onclick="SubmitConfirmation(this,'/GEB/SubmitGEBList','Do you want to Submit GEB List to Flt Cdr','SubmitGEB2IC')">
+                                                        <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                    </a>
+
+                                                }
+
+                                            }
+                                        }
+
+                                    }
+                                    @if (Convert.ToString(SessionManager.Role) == "FlightCommander")
+                                    {
+                                        if (item.SubmitBy2IC == "GEB List Submitted by 2IC" && item.SubmitByFltCdr == string.Empty && SessionManager.UnitType == "NORMAL")
+                                        {
+
+                                            <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.LetterForwardedId.ToString())' onclick="SubmitConfirmation(this,'/GEB/SubmitGEBList','Do you want to Submit GEB List to Sqn Cdr','SubmitGEBFltCdr')">
+                                                <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                            </a>
+                                            <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.LetterForwardedId.ToString())' onclick="SubmitConfirmation(this,'/GEB/SubmitGEBList','Do you want to Reject GEB List to 2IC','RejectGEBFltCdr')">
+                                                <img src="~/images/Reject.png" width="30" height="30" border="0" />
+                                            </a>
+                                        }
+
+
+                                        if (SessionManager.UnitType == "INDEPENDENT" && item.SubmitBy2IC == "GEB List Submitted by 2IC" && item.SubmitByFltCdr == String.Empty)
+                                        {
+                                            <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.LetterForwardedId.ToString())' onclick="SubmitConfirmation(this,'/GEB/SubmitGEBList','Do you want to Submit GEB List to Brig Avn','INDEPENDENT')">
+                                                <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                            </a>
+
+                                            <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.LetterForwardedId.ToString())' onclick="SubmitConfirmation(this,'/GEB/SubmitGEBList','Do you want to Reject GEB List to 2IC','RejectGEBFltCdr')">
+                                                <img src="~/images/Reject.png" width="30" height="30" border="0" />
+                                            </a>
+                                        }
+
+                                    }
+
+
+                                    @if (item.SubmitByFltCdr == "GEB List Rejected by Sqn Cdr")
+                                    {
+
+                                        <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.LetterForwardedId.ToString())' onclick="SubmitConfirmation(this,'/GEB/SubmitGEBList','Do you want to Submit GEB List to Sqn Cdr','SubmitGEBFltCdr')">
+                                            <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                        </a>
+                                        <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.LetterForwardedId.ToString())' onclick="SubmitConfirmation(this,'/GEB/SubmitGEBList','Do you want to Reject GEB List to 2IC','RejectGEBFltCdr')">
+                                            <img src="~/images/Reject.png" width="30" height="30" border="0" />
+                                        </a>
+                                        @*<a class="btn btn-outline-info" onclick="location.href='@Url.Action("AviatorListForNotifyUnit", "GEB", new { id = "0", fid = "0" })'">
+                                                Aviotor
+                                            </a>*@
+
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="4" style="font-weight:600;color:red;text-align:center"> No Record Found!!!</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .center {
+        text-align: center;
+    }
+</style>
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Content/CustomJS/GEBSubmit.js"></script>
+<script src="~/Content/CustomJS/AviatorJS.js"></script>
+<script src="~/Content/css/sweetalert.min.js"></script>
+<link href="~/Content/css/sweetalert.css" rel="stylesheet" />
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryui")
+    @Styles.Render("~/Content/cssjqryUi")
+
+    <script type="text/javascript">
+       var message = '@message';
+    var messageStatus = '@messageStatus';
+    var messagemidStatus = '@messagemidStatus ';
+    if (message)
+        sweetAlert(message, messagemidStatus, messageStatus);
+
+
+    </script>
+}
+

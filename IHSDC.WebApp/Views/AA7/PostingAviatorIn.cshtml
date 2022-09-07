@@ -1,0 +1,273 @@
+﻿@model IHSDC.WebApp.Models.PostingAviator
+@using IHSDC.WebApp.Connection
+
+@{
+    ViewBag.Title = "Posting In";
+    Layout = "~/Views/Shared/_NewAA7Layout.cshtml";
+    var message = TempData["Message"] ?? string.Empty;
+    var messageStatus = TempData["messageStatus"] ?? string.Empty;
+    var messagemidStatus = TempData["messagemidStatus"] ?? string.Empty;
+    int sno = 0;
+
+
+}
+
+
+<div class="card-body">
+
+
+
+    @using (Html.BeginForm("PostingAviatorIn", "AA7", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+
+        if (SessionManager.Role == "Unit")
+        {
+
+            <div id="contains">
+                <div class="row">
+                    <div class="col">
+                        <label><b> Aviator Name</b></label>
+                        @Html.HiddenFor(m => m.Aviator_ID)
+                        @*@Html.DropDownListFor(m => m.Aviator_ID, (new IHSDC.WebApp.Models.MasterModels()).LoadPostingAviatorName(), "--Select CAviator  Name --", new { @data_show_subtext = "true", @class = "select form-control", @data_live_search = "true", @required = true })*@
+                        @Html.TextBoxFor(m => m.AviatorName, new { @class = "form-control", @required = true, @readonly = true })
+                    </div>
+                    <div class="col">
+                        <label><b>Posting Auth</b></label>
+                        @Html.TextBoxFor(m => m.PostingAuth, new { @class = "form-control", @required = true, @onkeypress = "return postingAuthValidation(event)" })
+                    </div>
+                    <div class="col">
+                        <label><b>TORS Date</b></label>
+                        @Html.TextBoxFor(m => m.TORS, new { @class = "form-control", @onchange = "isDate(this)", @placeholder = "dd/mmm/yyyy" })
+                    </div>
+
+                </div>
+                <div class="row">
+
+                    <div class="col-4">
+                        <label><b>TOS Date</b></label>
+                        @Html.TextBoxFor(m => m.TOS, new { @class = "form-control", @onchange = "isDate(this),check(this,'TORS','TORS Date')", @placeholder = "dd/mmm/yyyy" })
+                    </div>
+
+                    <div class="col-4">
+                        <label><b> Posting Type</b></label>
+                        @*@Html.DropDownListFor(m => m.PostingType, (new IHSDC.WebApp.Models.MasterModels()).LoadPostingTypeCol(), "--Select Posting Type --", new { @data_show_subtext = "true", @class = "select form-control", @data_live_search = "true" })*@
+                        @Html.TextBoxFor(m => m.PostingType, new { @class = "form-control", @required = true, @readonly = true })
+                    </div>
+                    <div class="col-2"></div>
+                 
+                        <div class="col" style="margin-top: 2.5%; margin-bottom: 0.5%; text-align: center">
+                            <input type="submit" class="btn btn-success" name="btnval" value="@ViewBag.Button" />
+
+                            <a class="btn btn-info float-right" href="@Url.Action("Index","Home")" target="_top">
+                                Back
+                            </a>
+
+                        </div>
+                   
+                </div>
+               
+
+
+            </div>
+
+            @Html.HiddenFor(m => m.AviatorPosting_ID)
+        }
+    }
+
+    <br />
+    <div class="table-responsive">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="center">S/No</th>
+                    <th class="center" width="133px">Aviator Name</th>
+                    <th class="center">Posting Auth</th>
+                    <th class="center">Posting To Unit</th>
+                    <th class="center">TOS</th>
+                    <th class="center">TORS</th>
+                    <th class="center">Posting Type</th>
+
+                    <th class="center">Status</th>
+                    <th class="center" width="100px"> Actions </th>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+                @if (ViewBag.count > 0)
+                {
+                    foreach (var item in Model.ILPostingAviator)
+                    {
+                        <tr>
+                            <td>
+                                @{ sno++; }
+                                @sno
+                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.AviatorName)</td>
+                            <td>@Html.DisplayFor(modelItem => item.PostingAuth)</td>
+                            <td>@Html.DisplayFor(modelItem => item.PostingToUnitName)</td>
+                            <td>@Html.DisplayFor(modelItem => item.TOS)</td>
+                            <td>@Html.DisplayFor(modelItem => item.TORS)</td>
+                            <td>@Html.DisplayFor(modelItem => item.PostingType)</td>
+
+                            <td>
+
+                                @if (SessionManager.Role == "Unit" && item.CounterValidation == "Submitted to Posting In clk" && item.Validation == "Validated by Posting Out  Flt Cdr")
+                                {
+                                    <label><b>New Aviator Posting  In </b></label>
+                                }
+                                @if (SessionManager.Role == "FlightCommander")
+                                {
+                                    <label><b>Submitted to Posting In clk </b></label>
+                                }
+
+                                @if (item.CounterValidation == "Rejected  Posting In by Flt Cdr" && SessionManager.Role == "Unit")
+                                {
+                                    <label><b>Rejected by Flt Cdr</b></label>
+                                }
+
+
+                                @if (item.CounterValidation == "Submitted to Posting In Flt Cdr" && SessionManager.Role == "Unit")
+                                {
+                                    <label><b>Submitted to  Flt Cdr</b></label>
+                                }
+
+                                @if (item.CounterValidation == "Validated by  Posting In Flt Cdr" && SessionManager.Role == "Unit")
+                                {
+                                    <label><b>@item.CounterValidation</b></label>
+                                }
+
+                            </td>
+                            <td>
+
+                                @if (item.CounterValidation != "Submitted to Posting In Flt Cdr")
+                                {
+                                    if (item.CounterValidation != "Validated by  Posting In Flt Cdr" && SessionManager.Role == "Unit")
+                                    {
+
+                                        if (item.Validation != "Validated by Posting Out  Flt Cdr" || item.CounterValidation != "Rejected  Posting In by Flt Cdr" && SessionManager.Role == "Unit")
+                                        {
+                                            <a id="editdata" onclick="location.href='@Url.Action("PostingAviatorIn", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorPosting_ID.ToString()) })'">
+                                                <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                            </a>
+                                            <span>|</span>
+
+                                            if (item.TORS != null && item.TOS != null)
+                                            {
+
+                                                <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorPosting_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitPostingAviatorIn','Do you want to Submitted  to Posting in Flt Cdr ','SubmitClkPostingIn')">
+                                                    <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                </a>
+                                            }
+                                        }
+
+                                    }
+                                }
+
+                                @if (item.CounterValidation == "Submitted to Posting In Flt Cdr" && SessionManager.Role == "FlightCommander")
+                                {
+                                    <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorPosting_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitPostingAviatorIn','Do you want to Posting In This Aviator','ValidateFltCdrPostingIn')">
+                                        <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                    </a>
+                                    <span>|</span>
+
+                                    <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorPosting_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitPostingAviatorIn','Do you want to Rejected for clk','RejectFltCdrPostingIn')">
+                                        <img src="~/images/Reject.png" width="30" height="30" border="0" />
+                                    </a>
+
+                                }
+
+
+                                @if (item.CounterValidation == "Rejected  Posting In by Flt Cdr" && SessionManager.Role == "Unit")
+                                {
+                                    <a id="editdata" onclick="location.href='@Url.Action("PostingAviatorIn", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorPosting_ID.ToString()) })'">
+                                        <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                    </a>
+                                    <span>|</span>
+                                    <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorPosting_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitPostingAviatorIn','Do you want to Re-Submitted  to  Flt Cdr ','ReSubmitClkPostingIn')">
+                                        <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="4" style="font-weight:600;color:red;text-align:center"> No Record Found!!!</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Content/CustomJS/DeleteConfirmation.js"></script>
+<script src="~/Content/CustomJS/AviatorJS.js"></script>
+<script src="~/Content/css/sweetalert.min.js"></script>
+<link href="~/Content/css/sweetalert.css" rel="stylesheet" />
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryui")
+    @Styles.Render("~/Content/cssjqryUi")
+
+    <script type="text/javascript">
+
+      var message = '@message';
+    var messageStatus = '@messageStatus';
+    var messagemidStatus = '@messagemidStatus';
+    if (message)
+            sweetAlert(message, messagemidStatus, messageStatus);
+
+
+        $('#TOS').datepicker({
+			uiLibrary: 'bootstrap4',
+			dateFormat: "dd/M/yy",
+			autoclose: true
+        });
+
+
+
+        $('#TORS').datepicker({
+            uiLibrary: 'bootstrap4',
+            dateFormat: "dd/M/yy",
+            autoclose: true
+        });
+
+
+
+        function check(obj, compareField, comparemsg) {
+            debugger;
+            var a = $(obj).parent().children()[0]
+            var text = $(a).text();
+            var DateofIssueCatCard = $(obj).val();
+            var DateOfWings = $('#' + compareField + '').val();
+            if (DateOfWings > DateofIssueCatCard) {
+                sweetAlert(' ' + text + ' can not be less then ' + comparemsg + ' !', 'Please Re-Enter ' + text + '', 'warning');
+                $(obj).val('');
+                $(obj).focus();
+            }
+        }
+
+
+
+        function postingAuthValidation(event) {
+
+            if ((event.which < 48 || event.which > 57) && event.which != 46) {
+                if (event.which == 8 || event.which == 0 || event.which == 196 || event.which == 95 || event.which == 47 || event.which == 45 || event.which == 92) {
+                    return true;
+
+                }
+                else if (((event.charCode > 64 && event.charCode < 91) || (event.charCode > 96 && event.charCode < 123) || event.charCode == 32)) {
+                    return true;
+
+                }
+                else {
+                    return false;
+                }
+
+            }
+        }
+
+    </script>
+}
+

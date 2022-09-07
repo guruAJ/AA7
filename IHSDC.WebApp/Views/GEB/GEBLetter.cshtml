@@ -1,0 +1,434 @@
+﻿@model IHSDC.WebApp.Models.GEBLetter
+@using IHSDC.WebApp.Models
+@using IHSDC.WebApp.Connection
+@{
+                /**/
+
+                /**/
+
+                var message = TempData["Message"] ?? string.Empty;
+                var messageStatus = TempData["messageStatus"] ?? string.Empty;
+                var messagemidStatus = TempData["messagemidStatus"] ?? string.Empty;
+                ViewBag.Title = "GEB Letter";
+                Layout = "~/Views/Shared/_NewAA7Layout.cshtml"; int sno = 0;
+}
+
+
+
+
+<div style="position:absolute; right:10px;top:10px">
+    <div class="col">
+        <a class="btn btn-info float-right" href="@Url.Action("Index","Home")" target="_top">
+            Back
+        </a>
+    </div>
+</div>
+@using (Html.BeginForm("GEBLetter", "GEB", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="card-body">
+        <br />
+        @if (Convert.ToString(SessionManager.Role) == "GSO1AA7")
+        {
+            <div class="row">
+                <div class="col">
+                    <label><b>From Date</b></label>
+                    @Html.TextBoxFor(m => m.FromDate, new { @class = "form-control", @required = true, @onchange = "CheckFromDate(this)", @placeholder = "dd/mmm/yyyy" })
+                </div>
+                <div class="col">
+                    <label><b>To Date</b></label>
+                    @Html.TextBoxFor(m => m.ToDate, new { @class = "form-control", @required = true, @onchange = "CheckToDate(this)", @placeholder = "dd/mmm/yyyy" })
+                </div>
+                <div class="col">
+
+                    <label><b>Command</b></label>
+                    @Html.DropDownListFor(m => m.Comd, (new IHSDC.WebApp.Models.MasterModels()).LoadCommandId(), "--Select --", new { @data_show_subtext = "true", @class = "select form-control", @data_live_search = "true", @required = true })
+                </div>
+                <div class="col-4" style="margin-top:2.5%">
+
+                    <button type="submit" value="@ViewBag.ButtonName" name="btnval" class="btn btn-success">@ViewBag.ButtonName</button>
+                </div>
+
+            </div>
+        }
+        <br />
+
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th width="36px" class="center">S/No</th>
+                        <th class="center">From Date</th>
+                        <th class="center">To Date</th>
+                        <th class="center">Comd Name</th>
+                        @if (Convert.ToString(SessionManager.Role) == "GSO1AA7")
+                        {
+                            <th class="center">forwarded To</th>
+                        }
+                        <th class="center" width="150px">Status</th>
+
+                        <th width="278px" class="center">Actions</th>
+
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    @if (ViewBag.count > 0)
+                    {
+                        foreach (var item in Model.ILGEBLetter)
+                        {
+                            <tr>
+                                <td>
+                                    <b>
+                                        @{ sno++; }
+                                        @sno
+                                    </b>
+                                </td>
+                                <td><b>@Html.DisplayFor(modelItem => item.FromDate)</b></td>
+                                <td><b>@Html.DisplayFor(modelItem => item.ToDate)</b></td>
+                                <td><b>@Html.DisplayFor(modelItem => item.BrigAvnName)</b></td>
+                                @if (Convert.ToString(SessionManager.Role) == "GSO1AA7")
+                                {
+                                    <td>
+
+                                        @if (item.LetterForwarded == null)
+                                        {
+                                            <button id="btnmodal" type="button" onclick="GetChilds(this)" class="btn btn-link" data-toggle="modal" data-target="#myModal" data-cid="@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Comd.ToString()) "
+                                                    data-gid="@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString())">
+                                                Select commands & Avn Base
+                                            </button>
+                                        }
+                                        else
+
+                                        {
+                                            <button id="btnmodal" type="button" onclick="GetChildsList(this)" class="btn btn-link" data-toggle="modal" data-target="#myModal" data-cid="@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Comd.ToString()) "
+                                                    data-gid="@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString())">
+                                                View
+                                            </button>
+
+
+                                        }
+                                    </td>
+                                }
+                                <td>
+                                    <!------------------------STATUS Message---------------------->
+                                    @if (item.SubmitByComd != "List of GEB Submitted By Command")
+                                    {
+
+                                        if (item.LetterForwarded == "Letter Forwarded to Command")
+                                        {
+                                            if (Convert.ToString(SessionManager.Role) == "GSO1AA7")
+                                            {
+                                                <label><b>Letter Forworded to Command</b></label>
+                                            }
+                                            if (Convert.ToString(SessionManager.Role) == "BrigAvn")
+                                            {
+                                                if (item.SubmitByComd == null)
+                                                {
+                                                    <label><b>Forwarded By GSO1 AA7</b></label>
+                                                }
+
+                                                if (item.SubmitByComd == "Submitted to Comd")
+                                                {
+                                                    <label><b>Submitted to GSO1AA7</b></label>
+                                                }
+
+                                                if (item.SubmitByComd == "Completed")
+                                                {
+                                                    <label><b>@item.SubmitByComd</b></label>
+                                                }
+
+                                            }
+
+
+                                            if (Convert.ToString(SessionManager.Role) == "SquadronCommander")
+                                            {
+                                                if (item.SubmitSqnCdr == "Submitted to Brig Avn")
+                                                {
+
+                                                    <label><b>@item.SubmitSqnCdr</b></label>
+                                                }
+                                                else
+                                                {
+                                                    <label><b>Forwarded By GSO1 AA7</b></label>
+                                                }
+                                            }
+
+                                        }
+                                    }
+
+                                    @if (item.SubmitByComd == "List of GEB Submitted By Command")
+                                    {
+                                        <br /><label><b>Letter Forworded to Command</b></label>
+                                    }
+
+                                </td>
+                                <td>
+                                    @if (Convert.ToString(SessionManager.Role) == "GSO1AA7")
+                                    {
+                                        if (item.LetterForwarded != "Letter Forwarded to Command")
+                                        {
+
+
+                                            <a onclick="location.href='@Url.Action("GEBLetter", "GEB", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString()) })'">
+                                                <img src="~/Content/images/Editnew.png" width="30" height="30" border="0">
+                                            </a>
+                                            <span>|</span>
+                                            <a id="btndel" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString())' onclick="DeleteConfirmation(this,'/GEB/DeleteGEBLetter')">
+                                                <img src="~/Content/images/Delete.png" width="30" height="30" border="0" />
+                                            </a>
+                                            <span>|</span>
+
+                                            <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString())' data-cid='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Comd.ToString())' onclick="SubmitGEBLetterFor(this,'/GEB/SubmitGEBLetter','Do you want to forward this Letter to Respective Branch','SubmitGSO1AA7')">
+
+                                                <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                            </a>
+                                            @*<button id="btnSub" >Submit</button>*@
+                                        }
+                                    }
+
+                                    @if (SessionManager.Role == "SquadronCommander")
+                                    {
+
+                                        @*if (item.SubmitSqnCdr == "Submitted to Brig Avn")
+            {
+                <a onclick="location.href='@Url.Action("GEBListForSqn", "GEB", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString()) })'">
+                    <i class="fa fa-eye" aria-hidden="true"></i>
+
+                </a>
+
+            }*@
+                                        if (item.SubmitSqnCdr != "Submitted to Brig Avn")
+                                        {
+
+                                            <a onclick="location.href='@Url.Action("GEBListForSqn", "GEB", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString()) })'">
+                                                <i class="fa fa-eye" aria-hidden="true"></i>
+
+                                            </a>
+                                            <span>|</span>
+                                            <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString())' onclick="SubmitConfirmation(this,'/GEB/SubmitGEBListSqn','Do you want to Submit GEB List to Brig Avn','SubmitSqnCdr')">
+                                                <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                            </a>
+
+                                        }
+                                    }
+
+                                    @if (item.LetterForwarded != null)
+                                    {
+
+
+                                        @*<span>|</span>
+            <a class="btn btn-link" style="text-decoration:underline;color:#33b5e5" onclick="location.href='@Url.Action("NominalRollForGEB", "GEB", new { gid = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString()) })'">
+                View Appx C NominalRoll
+            </a>*@
+
+                                        if (SessionManager.Role == "BrigAvn")
+
+                                        {
+                                            if (item.SubmitByComd == null)
+                                            {
+
+
+                                                <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString())' onclick="SubmitConfirmation(this,'/GEB/SubmitGEBList','Do you want to Submit GEB List to GSO1 AA7 ','SubmitComd')">
+                                                    <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                </a> <span>|</span>
+                                                <a class="btn btn-link" style="text-decoration:underline;color:#33b5e5" onclick="location.href='@Url.Action("GEBLetterBrigAvn", "GEB", new { fid = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString()) })'">
+                                                   Affected Units                                                </a>
+                                            }
+
+                                        }
+
+
+                                        if (SessionManager.Role == "GSO1AA7" && item.SubmitByComd == "Submitted to Comd")
+                                        {
+
+                                            <span>|</span>
+
+                                            <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString())' onclick="SubmitConfirmation(this,'/GEB/SubmitGEBList','Do you want to Submi GEB to Dir AA7  ','SubmitGSO1AA7')">
+                                                <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                            </a>
+
+                                            <a class="btn btn-link" style="text-decoration:underline;color:#33b5e5" onclick="location.href='@Url.Action("GEBLetterBrigAvn", "GEB", new { fid = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString()) })'">
+                                                Aviator Details For GEB Unit Wise
+                                            </a>
+
+
+                                        }
+
+
+
+                                        if (item.SubmitByComd == "Submitted to Dir AA7" && SessionManager.Role == "GSO1AA7")
+                                        {
+
+                                            <label>     <b>  GEB submitted to Dir AA7 For Validation </b></label>
+                                        }
+
+
+                                        if (SessionManager.Role == "GSO1AA7" && item.SubmitByComd == null)
+                                        {
+                                            <label>     <b>  Comd Yet to be Submitted GEB </b></label>
+                                        }
+
+                                        if (SessionManager.Role == "DirAA7" && item.SubmitByComd == "Submitted to Dir AA7")
+                                        {
+
+
+
+                                            <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString())' onclick="SubmitConfirmation(this,'/GEB/SubmitGEBList','Do you want to Complete GEB List  ','CompleteGEBList')">
+                                                <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                            </a>
+                                            <span>|</span>
+                                            <a class="btn btn-link" style="text-decoration:underline;color:#33b5e5" onclick="location.href='@Url.Action("GEBLetterBrigAvn", "GEB", new { fid = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString()) })'">
+                                                Aviator Details & Performence during GEB Unit Wise
+                                            </a>
+                                        }
+                                        if (SessionManager.Role == "DirAA7" && item.SubmitByComd == "Completed")
+                                        {
+
+                                            <label>     <b> Validation complete  Successfully  </b></label>
+                                        }
+
+                                        @*if (SessionManager.Role == "DirAA7" && (item.SubmitByComd = "Submitted to Dir AA7"))
+            {
+                                            <label>     <b>  GSO1 AA7 Yet to be Submitted GEB </b></label>
+            }*@
+
+
+                                    }
+                                    @if (item.LetterForwarded == null  && SessionManager.Role == "GSO1AA7" )
+                                    {
+
+                                        <span>|</span>
+                                        <a id="btndel" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.GEBLetterId.ToString())' onclick="CancelConfirmation(this,'/GEB/CancelGEBLetter')">
+                                            <span class="btn btn-link">Cancel</span>
+                                        </a>
+
+                                    }
+
+
+
+
+
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="4" style="font-weight:600;color:red;text-align:center"> No Record Found!!!</td></tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <div class="container">
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content" style="    width: 1000px;margin-left: -47%;margin-top: 26%; eight: 409px;">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div style="overflow-y:auto; height: 270px;overflow-x:hidden">
+                            <table class="table table-bordered" width="100%" cellspacing="0" id="tbl">
+                                <thead>
+                                    <tr style="    position: fixed;top: 5px;">
+                                        <th class="center">Unit Name</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="childTable"></tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Save</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+}
+<style>
+    .center {
+        text-align: center;
+    }
+</style>
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Content/CustomJS/GEBSubmit.js"></script>
+<script src="~/Content/CustomJS/AviatorJS.js"></script>
+<script src="~/Content/CustomJS/DeleteConfirmation.js"></script>
+<script src="~/Content/css/sweetalert.min.js"></script>
+<link href="~/Content/css/sweetalert.css" rel="stylesheet" />
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryui")
+    @Styles.Render("~/Content/cssjqryUi")
+
+    <script type="text/javascript">
+       var message = '@message';
+    var messageStatus = '@messageStatus';
+    var messagemidStatus = '@messagemidStatus ';
+    if (message)
+            sweetAlert(message, messagemidStatus, messageStatus);
+
+        var today = new Date();
+        $('#FromDate').datepicker({
+			uiLibrary: 'bootstrap4',
+			dateFormat: "dd/M/yy",
+            autoclose: true,
+            minDate: today,
+           }  );
+        function CheckFromDate(obj) {
+
+            document.getElementById("ToDate").value = null;
+
+            }
+
+        $('#ToDate').datepicker({
+        uiLibrary: 'bootstrap4',
+			dateFormat: "dd/M/yy",
+            autoclose: true,
+            minDate: today
+        });
+        function CheckToDate(obj) {
+           debugger
+            var FromDate = $('#FromDate').val();
+            var ToDate = $(obj).val();
+            var F = new Date(FromDate)
+            var T = new Date(ToDate)
+            if (T < F) {
+                swal("To Date can't be Greater than From Date", "", "warning"); $(obj).val("");
+            }
+
+        }
+function CancelConfirmation(obj, ActionName) {	
+	swal({
+		title: "Are you want to sure Cancel this GEB Letter?",
+		text: "",
+		type: "warning",
+		showCancelButton: true,
+		confirmButtonColor: "#DD6B55",
+		confirmButtonText: "Yes, Cancel it!",
+		cancelButtonText: "No, cancel ",
+		closeOnConfirm: false,
+		closeOnCancel: false
+	},
+		function (isConfirm) {
+			if (isConfirm) {
+				var encrypted = $(obj).attr('data-id');
+				location.href = ActionName + '?gid=' + encrypted;
+			} else {
+				swal("GEB Letter is  not Cancel", "", "info");
+			}
+		}
+	);
+}
+
+
+
+
+    </script>
+}

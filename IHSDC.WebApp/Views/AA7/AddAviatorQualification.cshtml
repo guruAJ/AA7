@@ -1,0 +1,253 @@
+﻿@model IHSDC.WebApp.Models.AviatorSpecialQualCRUD
+@using IHSDC.WebApp.Connection
+
+@{
+    var message = TempData["Message"] ?? string.Empty;
+    var messageStatus = TempData["messageStatus"] ?? string.Empty;
+    var messagemidStatus = TempData["messagemidStatus"] ?? string.Empty;
+    ViewBag.Title = "Aviator Special Qualification ";
+    Layout = "~/Views/Shared/_NewAA7Layout.cshtml"; int sno = 0;
+}
+
+@using (Html.BeginForm("AddAviatorQualification", "AA7", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="card-body">
+        <div class="row">
+            @if (Convert.ToString(SessionManager.Role) == "Unit")
+            {
+                <div class="col">
+                    <label><b> Aviator Name</b></label>
+                    @Html.DropDownListFor(m => m.Aviator_ID, (new IHSDC.WebApp.Models.MasterModels()).LoadAviatorName(), "--Select Aviator  Name --", new { @data_show_subtext = "true", @class = "select form-control", @data_live_search = "true", @required = true })
+                </div>
+                <div class="col">
+                    <label><b> Special Pilot Qualification</b></label>
+                    @Html.DropDownListFor(m => m.SpecialQual_ID, (new IHSDC.WebApp.Models.MasterModels()).LoadSpecialQualifiaction(), "--Select Qualification --", new { @data_show_subtext = "true", @class = "select form-control", @data_live_search = "true", @required = true })
+                </div>
+                <div class="col">
+                    <label> <b> Special Qualification Date  </b> </label>
+                    @Html.TextBoxFor(m => m.SpecialQualDate, new { @class = "form-control", @required = true, @onchange = "isDate(this)", @placeholder = "dd/mmm/yyyy" })
+                </div>
+
+            }
+        </div>
+
+        <div class="row" style="margin-bottom: -29px">
+            <div class="col-10"></div>
+            <div class="col" style="margin-top: 1.5%; margin-bottom: 2.5%; text-align: center">
+                <button type="submit" value="@ViewBag.ButtonName" name="btnval" class="btn btn-success">@ViewBag.ButtonName</button>
+                <a class="btn btn-info float-right" href="@Url.Action("Index","Home")" target="_top">
+                    Back
+                </a>
+            </div>
+        </div>
+
+        <hr />
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="center">S/No</th>
+                        <th class="center">Aviator Name</th>
+                        <th class="center">Special Pilot Qualification </th>
+                        <th class="center"> Date</th>
+                        @if (Convert.ToString(SessionManager.Role) == "Unit" || Convert.ToString(SessionManager.Role) == "SecondInCommand" || Convert.ToString(SessionManager.Role) == "FlightCommander")
+                        {
+
+
+                            <th class="center"> Status</th>
+                            <th class="center" width="100px"> Actions </th>
+                        }
+
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    @if (ViewBag.count > 0)
+                    {
+                        foreach (var item in Model.ILAviatorSpecialQualCRUD)
+                        {
+                            <tr>
+                                <td>
+                                    @{ sno++; }
+                                    @sno
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.AviatorName)</td>
+                                <td>@Html.DisplayFor(modelItem => item.SpecialQualName)</td>
+
+                                <td>@Html.DisplayFor(modelItem => item.SpecialQualDate)</td>
+                                @if (Convert.ToString(SessionManager.Role) == "Unit" || Convert.ToString(SessionManager.Role) == "SecondInCommand" || Convert.ToString(SessionManager.Role) == "FlightCommander")
+                                {
+
+                                    <td>
+                                        @if (Convert.ToString(SessionManager.Role) == "Unit")
+                                        {
+
+                                            if (item.Validation != null)
+                                            {<label><b> @item.Validation</b></label>}
+
+                                        if (item.CounterValidation != null)
+                                        {<label><b>  @item.CounterValidation</b></label>}
+
+                                    if (item.CounterValidation == null && item.Validation == null)
+                                    {<label><b> New Data</b></label>}
+
+
+
+                                    if (Convert.ToString(SessionManager.Role) == "SecondInCommand")
+                                    {
+                                        if (item.CounterValidation != "Rejected by Flt Cdr")
+                                        {
+                                            if (item.Validation == "Submitted to 2IC")
+                                            {<label><b>  Submitted By Clk</b></label>}
+
+                                            if (item.CounterValidation == "Submitted to Flt Cdr")
+                                            {<label><b>  @item.CounterValidation</b></label>
+                                        }
+                                    }
+                                }
+
+
+                                if (item.CounterValidation == "Rejected by Flt Cdr")
+                                {<label><b>  @item.CounterValidation</b></label>}
+
+
+                        }
+
+
+
+                                        @if (Convert.ToString(SessionManager.Role) == "FlightCommander")
+                                        {
+
+                                            <label><b> @item.Validation</b></label>
+
+
+                                        }
+
+
+                                    </td>
+                                    <td>
+                                        @if (Convert.ToString(SessionManager.Role) == "Unit")
+                                        {
+                                            if (item.Validation == null)
+                                            {
+                                                <a onclick="location.href='@Url.Action("AddAviatorQualification", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorSpecialQual_ID.ToString()) })'">
+                                                    <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                                </a><span>|</span>
+                                                <a id="btndel" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorSpecialQual_ID.ToString())' onclick="DeleteConfirmation(this,'/AA7/DeleteAviatorQualification')">
+                                                    <img src="~/images/Delete.png" width="30" height="30" border="0" />
+                                                </a><span>|</span>
+                                                <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorSpecialQual_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorQualification','Do you want to Submit to 2IC ','SubmitClk')">
+                                                    <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                </a>
+                                            }
+                                            if (item.Validation == "Rejected by 2IC")
+                                            {
+                                                <a onclick="location.href='@Url.Action("AddAviatorQualification", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorSpecialQual_ID.ToString()) })'">
+                                                    <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                                </a><span>|</span>
+                                                <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorSpecialQual_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorQualification','Do you want to Submit to 2IC ','SubmitClk')">
+                                                    <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                </a>
+                                            }
+                                            if (item.CounterValidation == "Rejected by Flt Cdr")
+                                            {
+                                                <a onclick="location.href='@Url.Action("AddAviatorQualification", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorSpecialQual_ID.ToString()) })'">
+                                                    <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                                </a>
+                                                <span>|</span>
+                                                <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorSpecialQual_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorQualification','Do you want to Submit to Flt Cdr ','ReSubmitClk')">
+                                                    <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                </a>
+
+                                            }
+                                        }
+                                        @if (Convert.ToString(SessionManager.Role) == "SecondInCommand")
+                                        {
+                                            if (item.CounterValidation != "Rejected by Flt Cdr")
+                                            {
+                                                if (item.Validation == "Submitted to 2IC")
+                                                {
+                                                    <a onclick="location.href='@Url.Action("AddAviatorQualification", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorSpecialQual_ID.ToString()) })'">
+                                                        <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                                    </a><span>|</span>
+                                                    <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorSpecialQual_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorQualification','Do you want to Submit to Flt Cdr','Validate2IC')">
+                                                        <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                    </a>
+                                                    <span>|</span>
+                                                    <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorSpecialQual_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorQualification','Do you want to Reject ','Reject2IC')">
+                                                        <img src="~/images/Reject.png" width="30" height="30" border="0" />
+                                                    </a>}
+                                            }
+                                        }
+                                        @if (Convert.ToString(SessionManager.Role) == "FlightCommander")
+                                        {
+                                            <a onclick="location.href='@Url.Action("AddAviatorQualification", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorSpecialQual_ID.ToString()) })'">
+                                                <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                            </a><span>|</span>
+                                            <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorSpecialQual_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorQualification','Do you want to Counter Validate','ValidateFltCdr')">
+                                                <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                            </a>
+                                            <span>|</span>
+                                            <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorSpecialQual_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorQualification','Do you want to Reject ','RejectFltCdr')">
+                                                <img src="~/images/Reject.png" width="30" height="30" border="0" />
+                                            </a>
+                                            <span>|</span>
+                                            <a id="btndel" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorSpecialQual_ID.ToString())' onclick="DeleteConfirmation(this,'/AA7/DeleteAviatorQualification')">
+                                                <img src="~/images/Delete.png" width="30" height="30" border="0" />
+                                            </a>
+                                        }
+
+
+                                    </td>
+                                }
+
+                                <td>
+                                    <a onclick="location.href='@Url.Action("ViewAviatorDetails", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Aviator_ID.ToString()) })'">
+                                        <i class="fa fa-eye" style="font-size:25px" aria-hidden="true"></i>
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="4" style="font-weight:600;color:red;text-align:center"> No Record Found!!!</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Content/CustomJS/DeleteConfirmation.js"></script>
+<script src="~/Content/CustomJS/AviatorJS.js"></script>
+<script src="~/Content/css/sweetalert.min.js"></script>
+<link href="~/Content/css/sweetalert.css" rel="stylesheet" />
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryui")
+    @Styles.Render("~/Content/cssjqryUi")
+
+    <script type="text/javascript">
+       var message = '@message';
+    var messageStatus = '@messageStatus';
+        var messagemidStatus = '@messagemidStatus ';
+
+    if (message)
+        sweetAlert(message, messagemidStatus, messageStatus);
+        var today = new Date();
+
+		$('#SpecialQualDate').datepicker({
+			uiLibrary: 'bootstrap4',
+			dateFormat: "dd/M/yy",
+            autoclose: true,
+            maxDate: today
+		});
+
+
+
+    </script>
+}

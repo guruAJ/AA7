@@ -1,0 +1,204 @@
+﻿@model IHSDC.WebApp.Models.NominalRollForGEB
+@using IHSDC.WebApp.Connection
+@{
+
+
+    ViewBag.Title = "Appx C";
+    Layout = "~/Views/Shared/_NewAA7Layout.cshtml"; int sno = 0;
+}
+
+<div style="position:absolute; right:10px;top:10px">
+    <div class="col">
+        <a class="btn btn-info float-right" href="@Url.Action("GEBList","GEBExam")" target="_top">
+            Back
+        </a>
+    </div>
+</div>
+
+
+@using (Html.BeginForm("AppxCReport", "GEBExam", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="row" style="margin-bottom: 24px;">
+
+        <div class="col">
+            <label><b>IC No </b></label>
+            @Html.TextBoxFor(m => m.aviator.ColContains1, new { @class = "form-control", @placeHolder = "Enter IC No." })
+        </div>
+
+        <div class="col">
+            <label><b>Name </b></label>
+            @Html.TextBoxFor(m => m.aviator.ColContains2, new { @class = "form-control", @placeHolder = "Enter Name" })
+        </div>
+
+        <div class="col">
+            <label><b>Rank </b></label>
+            @Html.TextBoxFor(m => m.aviator.ColContains3, new { @class = "form-control", @placeHolder = "Enter Rank" })
+        </div>
+        <div class="col">
+            <label><b>Cat/IR </b></label>
+            @Html.TextBoxFor(m => m.aviator.ColContains4, new { @class = "form-control", @placeHolder = "Enter IC No." })
+        </div>
+        <div class="col">
+            <button type="submit" class="btn btn-primary" style="margin-top: 30px;">Search</button>
+            <input type="button"  style="margin-top: 30px;" class="btn btn-info float-right" id="btnExport" value="Export Pdf" />
+        </div>
+    </div>
+}
+
+<div class="row">
+
+</div>
+<body>
+    <div class="page" id="printAppxC">
+
+        <div class="row">
+            <div class="col-12">
+
+            </div>
+        </div>
+        <div class="row  float-right">
+            <div class="col-12">
+                <b><u>Appendix C</u></b>
+                <br />
+                <b><span>(SAO 2/S/200)</span></b>
+            </div>
+        </div>
+        <br />
+        <div class="row" style="margin-top: 33px;margin-left: 254px;">
+            <div class="col-12">
+                <span style="text-align:center"><b><u>NOMINAL ROLL OF AVIATORS OF  : xxxxxx  ARMY AVN SQN (SPL OPS) FOR GEB VIS : @ViewBag.GEBMonth</u></b></span>
+            </div>
+        </div>
+        <br />
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr style="text-align:center">
+                        <th rowspan="3">Sno</th>
+                        <th rowspan="3">Rank</th>
+                        <th rowspan="3">Name</th>
+                        <th rowspan="3">Unit</th>
+                        <th rowspan="3">Present Cat/IR</th>
+                        <th rowspan="3">Recom of CO/OC</th>
+                        <th colspan="5">Flg Hrs Heptr (Capt)</th>
+                        <th rowspan="3">Cat/IR Awarded by GEB</th>
+                        <th rowspan="3">Remarks</th>
+                    </tr>
+                    <tr style="text-align:center">
+                        <th rowspan="3">Total</th>
+                        <th colspan="3">On Type</th>
+                    </tr>
+                    <tr style="text-align:center">
+                        <th><ul>Day</ul></th>
+                        <th><ul>Night</ul></th>
+                        <th><ul>IMC</ul></th>
+                        <th><ul>SIF</ul></th>
+                    </tr>
+
+                </thead>
+                <tbody>
+
+
+                    @foreach (var item in Model.ILLetterForwardedGEB)
+                    {
+                        <tr>
+                            <td>
+                                <b>
+                                    @{ sno++; }
+                                    @sno
+                                </b>
+                            </td>
+                            <td>
+                                <label><b>@item.Rank</b></label>
+                            </td>
+                            <td>
+                                <label><b>@item.AviatorName</b></label>
+                            </td>
+                            <td>
+                                <label><b>@item.UnitName</b></label>
+                            </td>
+                            <td>
+                                <label><b>@item.PresentCatIR</b></label>
+                            </td>
+                            <td>
+                                <label><b>@item.RecomForCatIR</b></label>
+                            </td>
+                            <td>
+                                <label>
+                                    <b>
+
+                                        @item.ConvertFlyingHrs(item.TotalCptHrsPresentTypeDay + item.TotalCptHrsPresentTypeNight)
+
+                                    </b>
+                                </label>
+                            </td>
+                            <td>
+                                <label><b>@item.ConvertFlyingHrs(item.CaptHrsDayOnAllTypes)</b></label>
+                            </td>
+                            <td>
+                                <label><b>@item.ConvertFlyingHrs(item.CaptHrsNightOnAllTypes)</b></label>
+                            </td>
+                            <td>
+                                <label><b>@item.ConvertFlyingHrs(item.IMCDayHrs)</b></label>
+
+                            </td>
+                            <td>
+                                <label><b>@item.ConvertFlyingHrs(Convert.ToDecimal(item.Col4))</b></label>
+                            </td>
+                            <td>
+                                <label><b>@item.AppearingFor</b></label>
+                            </td>
+                            <td>
+                                <label><b>@item.RemarksAppearing</b></label>
+                            </td>
+
+
+                        </tr>
+
+
+                    }
+
+
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <form action="~/Home/Upload" method="post" id="myForm">
+        <input type="hidden" name="data1" id="data1">
+        <input type="hidden" name="filename" id="filename" value="AppxC">
+        
+    </form>
+</body>
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/pdfmake.min.js"></script>
+<script src="~/Scripts/html2canvas.min.js"></script>
+<script>
+    $("body").on("click", "#btnExport", function () {
+        debugger;
+        html2canvas($('#printAppxC')[0], {
+            onrendered: function (canvas) {
+                var data = canvas.toDataURL();
+                var docDefinition = {
+                    content: [{
+                        image: data,
+                        width: 500
+                    }]
+                };
+               /// pdfMake.createPdf(docDefinition).download("AppxC.pdf");
+                const pdfDocGenerator = pdfMake.createPdf(docDefinition);
+                pdfDocGenerator.getBase64((data) => {
+                    $('#data1').val(data);
+                    $("#myForm").submit();
+                });
+            }
+
+        });
+
+    });
+
+
+</script>
+

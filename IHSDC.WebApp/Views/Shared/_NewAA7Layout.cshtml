@@ -1,0 +1,541 @@
+﻿@using Microsoft.AspNet.Identity
+@using IHSDC.WebApp.Connection;
+@{
+    Layout = null;
+
+}
+<style>
+    .danger {
+        color: red;
+    }
+    sticky-footer {
+        background: #ffab62;
+        width: 100%;
+        height: 100px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+    }
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>AA7 </title>
+    <!-- Bootstrap core CSS-->
+    <link href="~/NewContent/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom fonts for this template-->
+    <link href="~/NewContent/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <!-- Page level plugin CSS-->
+    <link href="~/NewContent/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">
+    <!-- Custom styles for this template-->
+    <link href="~/NewContent/css/sb-admin.css" rel="stylesheet">
+    @*// @Scripts.Render("~/bundles/modernizr")*@
+
+
+</head>
+<body id="page-top">
+
+    <nav class="navbar navbar-expand  static-top text-light" style="background-color: #008cff !important; opacity: 0.8">
+        <span class="navbar-brand mr-1 text-light" href="#" style="color: black;font-weight:600;font-size: 30px;">Army Aviation Automation</span>
+        <button class="btn btn-link btn-sm text-black order-1 order-sm-0" id="sidebarToggle" href="#">
+            <i class="fas fa-bars" style="color:black;font-size:18px"></i>
+        </button>
+        <div class="header" style="margin-left: margin-left: 58%;">
+
+
+        </div>
+        <!-- Navbar Search -->
+        <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0"></form>
+        <!-- Navbar -->
+        <ul class="navbar-nav ml-auto ml-md-0">
+
+            <li class="nav-item dropdown no-arrow text-light" style="margin-right: 71px;">
+
+                <h4 class="text-light" style="color:black;font-size:21px;">Logged in User ! @SessionManager.UserName</h4>
+            </li>
+            <li class="nav-item dropdown no-arrow text-light">
+
+                <button type="button" onclick="location.href='@Url.Action("LogOut", "Account")'" class="btn btn-danger text-light">Logout </button>
+
+
+                @*<a class="dropdown-item" onclick="location.href='@Url.Action("LogOut", "Account")'">Logout  <i class="fas fa-user-circle fa-fw" style="color:blacksmoke"></i> </a>*@
+
+
+            </li>
+        </ul>
+    </nav>
+
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <ul class="sidebar navbar-nav text-light" style="background-color: lightgrey !important; opacity: 0.8">
+            <li class="nav-item active">
+                <a class="nav-link" href="~/Home/Index">
+                    <i class="fas fa-fw fa-tachometer-alt text-dark" style=" color: black;font-size: 18px;"></i>
+                    <span  class="text-dark"  style=" color: black;font-size: 18px;font-weight:500">Dashboard</span>
+                </a>
+            </li>
+            @if (Request.IsAuthenticated)
+            {
+
+
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style=" color: black;font-size: 19px;font-weight:500">
+                        <i class="fas fa-fw fa-folder" style=" color: black;font-size: 15px;"></i>
+                        <span style=" color: black;font-size: 19px;font-weight:500">Account Master</span>
+                    </a>
+                    <div class="dropdown-menu  fix" aria-labelledby="pagesDropdown">
+                        <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("ChangePassword", "Manage")' )>Change Password </a>
+                        @if (SessionManager.UserName == "Admin")
+                        {
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("Hierarchy", "Account")' )>Accounts</a>
+                        }
+
+                        @if (SessionManager.Role != "Unit")
+                        {
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("ResetPassword", "Account")' )>Reset Password</a>
+                        }
+                    </div>
+
+                </li>
+
+                if (@SessionManager.UserName == "Admin")
+                {
+                    @*<li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-fw fa-folder" style=" color: black;font-size: 15px;"></i>
+                                <span style=" color: black;font-size: 19px;font-weight:500">Import Keys </span>
+                            </a>
+                            <div class="dropdown-menu  fix" aria-labelledby="pagesDropdown">
+                                <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddCert", "Token")' )>Import</a>
+
+                            </div>
+                        </li>*@
+                }
+                @*<li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-fw fa-folder" style=" color: black;font-size: 15px;"></i>
+                            <span style=" color: black;font-size: 19px;font-weight:500">Import Data </span>
+                        </a>
+                        <div class="dropdown-menu  fix" aria-labelledby="pagesDropdown">
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("ImportData", "Import")' )>Import</a>
+
+                        </div>
+
+                    </li>*@
+
+
+                if (SessionManager.Role == "FlightCommander")
+                {
+                    <li class="nav-item dropdown">
+                        <a style=" color: black;font-size: 19px;font-weight:500" class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-fw fa-folder" style=" color: black;font-size: 15px;"></i>
+                            <span style="color: black;font-size: 19px;font-weight:500">Validation</span>
+                        </a>
+                        <div class="dropdown-menu  fix" aria-labelledby="pagesDropdown">
+                            <a style=" color: black;font-size: 19px;font-weight:500;" class="dropdown-item" href='@Url.Action("AddAviator", "AA7")' )>Aviator</a>
+                            <a style=" color: black;font-size: 19px;font-weight:500" class="dropdown-item" href='@Url.Action("AddAviatorContactDetails", "AA7")' )>Contact Detail</a>
+                            <a style=" color: black;font-size: 19px;font-weight:500" class="dropdown-item" href='@Url.Action("AddAviatorCourses", "AA7")' )>Aviator Course</a>
+                            <a style=" color: black;font-size: 19px;font-weight:500" class="dropdown-item" href='@Url.Action("AddAviatorHonourAwards", "AA7")' )>Honour Awards</a>
+                            <a style=" color: black;font-size: 19px;font-weight:500" class="dropdown-item" href='@Url.Action("AddAviatorFlyingHrs", "AA7")' )>Flying Hrs</a>
+                            <a style=" color: black;font-size: 19px;font-weight:500" class="dropdown-item" href='@Url.Action("AddAviatorSpecialEqpt", "AA7")' )>Special Eqpt</a>
+                            <a style=" color: black;font-size: 19px;font-weight:500" class="dropdown-item" href='@Url.Action("AddAviatorQualification", "AA7")' )>Special Qual</a>
+                            <a style=" color: black;font-size: 19px;font-weight:500" class="dropdown-item" href='@Url.Action("AddAviatorMedical", "AA7")' )>Medical</a>
+                            <a style=" color: black;font-size: 19px;font-weight:500" class="dropdown-item" href='@Url.Action("PostingAviatorOut", "AA7")' )>Posting Out</a>
+                            <a style=" color: black;font-size: 19px;font-weight:500" class="dropdown-item" href='@Url.Action("PostingAviatorIn", "AA7")' )>Posting In</a>
+
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a style=" color: black;font-size: 20px;font-weight:500" class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-fw fa-folder"></i>
+                            <span style="font-size: 20px; font-weight: 600;">Update</span>
+                        </a>
+                        <div class="dropdown-menu  fix" aria-labelledby="pagesDropdown">
+                            <a style=" color: black;font-size: 19px;font-weight:500" class="dropdown-item" href='@Url.Action("AddAviatorAppt", "AA7")' )>Update Appt</a>
+                            <a style=" color: black;font-size: 19px;font-weight:500" class="dropdown-item" href='@Url.Action("AddAviatorRank", "AA7")' )>Update Rank</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a style=" color: black;font-size: 20px;font-weight:500" class="nav-link dropdown-toggle" href='@Url.Action("AddAviatorAccident", "AA7")' ) aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-fw fa-folder"></i>
+                            <span style="font-size: 20px; font-weight: 600;">Accident</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a style=" color: black;font-size: 20px;font-weight:500" class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-fw fa-folder"></i>
+                            <span style="font-size: 20px; font-weight: 600;">GEB Exam</span>
+                        </a>
+                        <div class="dropdown-menu  fix" aria-labelledby="pagesDropdown">
+                            <a style="  color: black;font-size: 19px;font-weight:500" class="dropdown-item" href='@Url.Action("UserGEBList", "GEB")' )>GEB Letter</a>
+                        </div>
+
+                    </li>
+                }
+
+
+
+                if (SessionManager.Role == "Unit")
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style=" color: black;font-size: 19px;font-weight:500">
+                            <i class="fas fa-fw fa-folder" style=" color: black;font-size: 15px;"></i>
+                            <span style=" color: black;font-size: 19px;font-weight:500">Add Details </span>
+                        </a>
+                        <div class="dropdown-menu  fix" aria-labelledby="pagesDropdown">
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviator", "AA7")' )>Aviator</a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorContactDetails", "AA7")' )>Contact Detail</a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorCourses", "AA7")' )>Courses</a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorHonourAwards", "AA7")' )>Honour Award</a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorFlyingHrs", "AA7")' )>Flying Hrs</a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorSpecialEqpt", "AA7")' )>Special Eqpt Qual</a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorQualification", "AA7")' )>Special Pilot Qual</a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorMedical", "AA7")' )>Medical</a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("PostingAviatorOut", "AA7")' )>Posting Out</a>
+                            <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("PostingAviatorIn", "AA7")' )>Posting In</a>
+
+                            @*<a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("UnitStrReturn", "Report")' )>Report</a>*@
+
+                        </div>
+
+                    </li>
+
+
+
+
+
+                }
+                if (SessionManager.Role == "Administrator")
+                {
+
+                    <li class="nav-item dropdown">
+                        <a style=" font-size: 20px;" class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-fw fa-folder" style="    color: black;
+    font-weight: 600;
+    font-size: 19px;"></i>
+                            <span style="    color: black;
+    font-weight: 600;
+    font-size: 19px;">Add </span>
+                        </a>
+                        <div class="dropdown-menu  fix" aria-labelledby="pagesDropdown">
+
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddComd", "Master")' )>Comd</a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddCorps", "Master")' )>Corps</a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddUnit", "Master")' )>Unit</a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddSpecialEqpt", "Master")' )>Special Eqpt </a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddSpecialQual", "Master")' )>Special Qual</a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddHonourAward", "Master")' )>Honour Award </a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddArmService", "Master")' )>Arm Service </a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAircraft", "Master")' )>Aircraft</a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddCourse", "Master")' )>Course</a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAccidentCat", "Master")' )>Accident Cat </a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddFlgWithAppt", "Master")' )>Examiner Appt</a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddCourseGrading", "Master")' )>Course Grading </a>
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddRank", "Master")' )>Rank </a>
+                        </div>
+                    </li>
+
+                }
+                if (User.IsInRole("BrigAvn"))
+                {
+
+
+                }
+
+
+                if (SessionManager.Role == "SecondInCommand")
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;font-size: 19px;font-weight:500">
+                            <i class="fas fa-fw fa-folder" style="color: black;font-size: 15px;"></i>
+                            <span style="color: black;font-size: 19px;font-weight:500">Validation</span>
+                        </a>
+                        <div class="dropdown-menu  fix" aria-labelledby="pagesDropdown">
+
+                            <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviator", "AA7")' )>Aviator</a>
+                            <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorContactDetails", "AA7")' )>Contact Detail</a>
+                            <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorCourses", "AA7")' )>Course</a>
+                            <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorHonourAwards", "AA7")' )>Honour Award</a>
+                            <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorFlyingHrs", "AA7")' )>Flying Hrs</a>
+                            <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorSpecialEqpt", "AA7")' )>Special Eqpt</a>
+                            <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorQualification", "AA7")' )>Special Qual</a>
+                            <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorMedical", "AA7")' )>Medical</a>
+
+                            @*<a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("UnitStrReturn", "Report")' )>Report</a>*@
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a style=" font-size: 20px;color:black " class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-fw fa-folder" style="color: black;font-size: 15px;"></i>
+                            <span style="color: black;font-size: 19px;font-weight:500">Accident Incident</span>
+                        </a>
+                        <div class="dropdown-menu  fix" aria-labelledby="pagesDropdown">
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorAccident", "AA7")' )>Add Accident</a>
+                        </div>
+
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a style=" font-size: 20px;color:black" class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-fw fa-folder" style="color: black;font-size: 15px;"></i>
+                            <span style="color: black;font-size: 19px;font-weight:500">GEB Exam </span>
+                        </a>
+                        <div class="dropdown-menu  fix" aria-labelledby="pagesDropdown">
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("UserGEBList", "GEB")' )>GEB Letter/Create</a>
+                        </div>
+
+                    </li>
+
+
+                }
+
+                if (SessionManager.Role == "SquadronCommander")
+
+                {
+
+                    <li class="nav-item dropdown">
+                        <a style=" font-size: 20px;color:black" class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-fw fa-folder" style="color: black;font-size: 15px;"></i>
+                            <span style="color: black;font-size: 19px;font-weight:500">Validation </span>
+                        </a>
+                        <div class="dropdown-menu  fix" aria-labelledby="pagesDropdown">
+
+                            <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviator", "AA7")' )>Aviator</a>
+                            <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorContactDetails", "AA7")' )>Contact Detail</a>
+                            <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorCourses", "AA7")' )>Course</a>
+                            <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorHonourAwards", "AA7")' )>Honour Award</a>
+                            <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorFlyingHrs", "AA7")' )>FlyingHrs</a>
+                            <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorSpecialEqpt", "AA7")' )>Special Eqpt</a>
+                            <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorQualification", "AA7")' )>Special Qual</a>
+                            <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorMedical", "AA7")' )>Medical</a>
+                            @*<a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("UnitStrReturn", "Report")' )>Report</a>*@
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a style="font-size: 20px;" href='@Url.Action("AddAviatorAccident", "AA7")' ) aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-fw fa-folder" style="color: black;font-size: 15px;margin-left: 6%;"></i>
+                            <span style="color: black;font-size: 19px;font-weight:500">Accident/Incident</span>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a style=" font-size: 20px;color:black" class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-fw fa-folder" style="color: black;font-size: 15px;"></i>
+                            <span style="color: black;font-size: 19px;font-weight:500">GEB Exam</span>
+                        </a>
+                        <div class="dropdown-menu  fix" aria-labelledby="pagesDropdown">
+                            <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("GEBLetter", "GEB")' )>GEB Letter</a>
+                        </div>
+
+                    </li>
+
+                }
+
+
+
+                if (SessionManager.Role == "DGAvn" ||
+                SessionManager.Role == "GSO1AA7" ||
+                SessionManager.Role == "DirAA7" || SessionManager.Role == "BrigAvn" || SessionManager.Role == "ClkAA7")
+                {
+                    <li class="nav-item dropdown">
+                        <a style="font-size: 20px;color: black;" class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-fw fa-folder" style="color: black;font-size: 15px;"></i>
+                            <span style="color: black;font-size: 19px;font-weight:500">Aviators Record </span>
+                        </a>
+                        <div class="dropdown-menu  fix" aria-labelledby="pagesDropdown">
+
+                            <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviator", "AA7")' )>Aviator</a>
+                            @*<a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorContactDetails", "AA7")' )>Contact Detail</a>
+                                <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorCourses", "AA7")' )>Course</a>
+                                <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorHonourAwards", "AA7")' )>Honour Award</a>
+                                <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorFlyingHrs", "AA7")' )>FlyingHrs</a>
+                                <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorSpecialEqpt", "AA7")' )>Special Eqpt</a>
+                                <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorQualification", "AA7")' )>Special Qual</a>
+                                <a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("AddAviatorMedical", "AA7")' )>Medical</a>*@
+                            @*<a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("UnitStrReturn", "Report")' )>Report</a>*@
+
+                            @*<a style="font-size: 20px;" class="dropdown-item" href='@Url.Action("GEBLetter", "GEB")' )>GEB Letter</a>*@
+                        </div>
+
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a style=" font-size: 20px;color: black;" class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-fw fa-folder" style="color: black;font-size: 15px;"></i>
+                            <span style="color: black;font-size: 19px;font-weight:500">GEB Exam</span>
+                        </a>
+                        <div class="dropdown-menu  fix" aria-labelledby="pagesDropdown">
+                            <a style=" font-size:20px;" class="dropdown-item" href='@Url.Action("GEBLetter", "GEB")' )>GEB Letter</a>
+
+                            @if (SessionManager.Role == "GSO1AA7" || SessionManager.Role == "DirAA7" || SessionManager.Role == "ClkAA7")
+                            {
+                                <a style=" font-size:20px;" class="dropdown-item" href='@Url.Action("GEBList", "GEBExam")' )> GEB Reports </a>
+                            }
+                        </div>
+
+                    </li>
+
+
+
+                }
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="    color: black;">
+                        <i class="fas fa-fw fa-folder" style=" color: black;font-size: 15px;color:black"></i>
+                        <span style=" color: black;font-size: 19px;font-weight:500">Search </span>
+                    </a>
+                    <div class="dropdown-menu  fix" aria-labelledby="pagesDropdown">
+                        <a style=" font-size: 20px;" class="dropdown-item" href='@Url.Action("AviatorList", "Search")' )>Search Aviator</a>
+
+                    </div>
+
+
+                </li>
+            }
+
+
+
+
+
+        </ul>
+
+        <div id="content-wrapper">
+            <div class="container-fluid">
+                <!-- Breadcrumbs-->
+                @*<ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="#">Dashboard</a>
+            </li>
+            <li class="breadcrumb-item active">@ViewBag.Title</li>
+        </ol>*@
+                <!-- Icon Cards-->
+                <!-- Area Chart Example-->
+                @*background-image:  linear-gradient(120deg,#a1c4fd 0,#c2e9fb 100%);opacity: 0.8; font-size: 24px;*@
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <i class="fas fa-chart-area"></i>
+
+                        @ViewBag.Title
+
+
+                    </div>
+
+                    <div class="card-body">
+                        @RenderBody()
+                    </div>
+
+                </div>
+                <!-- DataTables Example -->
+
+            </div>
+            <!-- /.container-fluid -->
+            <!-- Sticky Footer -->
+            <footer class="sticky-footer"  style="background-color: #008cff; opacity: 3.8; position: fixed; margin-bottom: -19px"   >
+                    <div class="container my-auto">
+                        <div class="copyright text-center my-auto">
+                            @*<span>Copyright © Your Website 2022</span>*@
+
+                            <p class="mb-0  text-light" style="font-size:22px;">Copyright © 2022. Developed by <span class="text-danger text-light">ASDC , DGIS :</span> Sponsor Dte : <span class="text-light">Aviation Dte </span> </p>
+                        </div>
+                    </div>
+                </footer>
+        </div>
+        <!-- /.content-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="login.html">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap core JavaScript-->
+    <div style="display:none">
+        <script src="~/NewContent/vendor/jquery/jquery.min.js"></script>
+        <script src="~/NewContent/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <!-- Core plugin JavaScript-->
+        <script src="~/NewContent/vendor/jquery-easing/jquery.easing.min.js"></script>
+        <!-- Page level plugin JavaScript-->
+        <script src="~/NewContent/vendor/datatables/jquery.dataTables.js"></script>
+        <script src="~/NewContent/vendor/datatables/dataTables.bootstrap4.js"></script>
+        <!-- Custom scripts for all pages-->
+        <script src="~/NewContent/js/sb-admin.min.js"></script>
+        <!-- Demo scripts for this page-->
+        <script src="~/NewContent/js/demo/datatables-demo.js"></script>
+    </div>
+<style>
+
+    #watermark {
+        position: absolute;
+        top: 0;
+        left: 0;
+        color: red;
+        font-size: 18px;
+        pointer-events: none;
+        -webkit-transform: rotate(-45deg);
+        -moz-transform: rotate(-45deg);
+        position: relative;
+        overflow: hidden;
+    }
+
+
+
+    /*a:hover {
+        background: linear-gradient(to top left, #ff9933 22%, #cc99ff 90%);
+    }*/
+
+    .dropdown-item:hover {
+        background: linear-gradient(to top left, #ff9933 22%, #cc99ff 90%);
+    }
+
+    .dropdown-item {
+        font-weight: 500;
+    }
+
+    .fix {
+        background-image: linear-gradient(120deg,#a1c4fd 0,#c2e9fb 100%);
+    }
+
+    .collapsCol {
+        background-image: linear-gradient(120deg,#a1c4fd 0,#c2e9fb 100%);
+        max-height: 44px;
+    }
+
+    .btnCol {
+        font-size: 22px;
+        color: black;
+        font-weight: 500;
+        margin-top: -14px;
+    }
+   
+</style>
+@RenderSection("scripts", required: false)

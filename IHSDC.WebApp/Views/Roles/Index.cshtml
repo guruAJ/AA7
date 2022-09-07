@@ -1,0 +1,61 @@
+﻿@model IEnumerable<IHSDC.WebApp.Models.RoleViewModel>
+
+@{
+    ViewBag.Title = "Roles";
+}
+
+<h2>@ViewBag.Title.</h2>
+<h4>All roles in the application.</h4>
+<p>
+    @Html.ActionLink("Create New", "Create", new object { }, new { @class = "btn btn-primary" })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.RoleName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.RoleName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+            @{ 
+                if(item.RoleName== "Administrator")
+                {
+                    <span class="fa fa-shield text-danger"></span>
+                }
+                else
+                {
+                    if (item.RoleName == "User")
+                    {
+                    <span class="fa fa-shield text-warning"></span>
+                    }
+                    else
+                    {
+                        if (item.RoleName == "NoSubordinates")
+                        {
+                            <span class="fa fa-shield text-warning"></span>
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Delete", "Delete", new { id = item.RoleName })
+                            }
+
+                        }
+                    }
+                }
+        </td>
+    </tr>
+}
+
+</table>

@@ -1,0 +1,408 @@
+﻿
+@model IHSDC.WebApp.Models.AviatorFlyingHrsCRUD
+@using IHSDC.WebApp.Connection;
+
+@{
+
+    var message = TempData["Message"] ?? string.Empty;
+    var messageStatus = TempData["messageStatus"] ?? string.Empty;
+    var messagemidStatus = TempData["messagemidStatus"] ?? string.Empty;
+    ViewBag.Title = "Aviator Flying Hrs ";
+    Layout = "~/Views/Shared/_NewAA7Layout.cshtml"; int sno = 0;
+}
+
+
+<script type="text/javascript">
+    window.history.forward();
+    function noBack() {
+        window.history.forward();
+    }
+</script>
+
+
+
+
+
+
+@using (Html.BeginForm("AddAviatorFlyingHrs", "AA7", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <div class="card-body">
+        @if (Convert.ToString(SessionManager.Role) == "Unit" || Convert.ToString(SessionManager.Role) == "SecondInCommand" && ViewBag.ButtonName == "Update" || Convert.ToString(SessionManager.Role) == "FlightCommander" && ViewBag.ButtonName == "Update")
+        {
+
+
+
+            <div class="row">
+                <div class="col">
+                    <label><b> Aviator Name</b></label>
+                    @Html.DropDownListFor(m => m.Aviator_ID, (new IHSDC.WebApp.Models.MasterModels()).LoadAviatorName(), "--Select Aviator  Name --", new { @data_show_subtext = "true", @class = "select form-control", @data_live_search = "true", @required = true })
+                </div>
+                <div class="col">
+                    <label><b> Aircraft Name</b></label>
+                    @Html.DropDownListFor(m => m.Aircraft_ID, (new IHSDC.WebApp.Models.MasterModels()).LoadAircraftName(), "--Select Aircraft Name --", new { @data_show_subtext = "true", @class = "select form-control", @data_live_search = "true", @required = true })
+                </div>
+                <div class="col-2">
+                    <label><b> Day Dual Hrs</b></label>
+                    @Html.TextBoxFor(m => m.DayDualHrs, new { @class = "form-control", onkeypress = "return blockSpecialChar(event)", @onchange = "CheckMinute(this)" })
+                </div>
+                <div class="col-2">
+                    <label><b> Day Solo Hrs</b></label>
+                    @Html.TextBoxFor(m => m.DaySoloHrs, new { @class = "form-control", onkeypress = "return blockSpecialChar(event)", @onchange = "CheckMinute(this)" })
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label><b>Day Copilot Hrs</b></label>
+                    @Html.TextBoxFor(m => m.DayCopilotHrs, new { @class = "form-control", onkeypress = "return blockSpecialChar(event)", @onchange = "CheckMinute(this)" })
+                </div>
+                <div class="col">
+                    <label><b>Night Dual Hrs</b></label>
+                    @Html.TextBoxFor(m => m.NightDualHrs, new { @class = "form-control", onkeypress = "return blockSpecialChar(event)", @onchange = "CheckMinute(this)" })
+                </div>
+                <div class="col">
+                    <label><b>Night Solo Hrs</b></label>
+                    @Html.TextBoxFor(m => m.NightSoloHrs, new { @class = "form-control", onkeypress = "return blockSpecialChar(event)", @onchange = "CheckMinute(this)" })
+                </div>
+                <div class="col">
+                    <label><b>Night Copilot Hrs</b></label>
+                    @Html.TextBoxFor(m => m.NightCopilotHrs, new { @class = "form-control", onkeypress = "return blockSpecialChar(event)", @onchange = "CheckMinute(this)" })
+                </div>
+                <div class="col">
+                    <label><b>NVG Exp</b></label>
+                    @Html.TextBoxFor(m => m.NVGExp, new { @class = "form-control", onkeypress = "return blockSpecialChar(event)", @onchange = "CheckMinute(this)" })
+                </div><div class="col">
+                    <label><b>WSO Exp</b></label>
+                    @Html.TextBoxFor(m => m.WSOExp, new { @class = "form-control", onkeypress = "return blockSpecialChar(event)", @onchange = "CheckMinute(this)" })
+                </div>
+
+                <div class="col">
+                    <label><b>IF Actual</b></label>
+                    @Html.TextBoxFor(m => m.IF_Actual, new { @class = "form-control", onkeypress = "return blockSpecialChar(event)", @onchange = "CheckMinute(this)" })
+                </div>
+
+                <div class="col">
+                    <label><b>ALH Sml Hrs</b></label>
+                    @Html.TextBoxFor(m => m.ALHSmlHrs, new { @class = "form-control", onkeypress = "return blockSpecialChar(event)", @onchange = "CheckMinute(this)" })
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label><b>Instr Day Hrs</b></label>
+                    @Html.TextBoxFor(m => m.InstrDayHrs, new { @class = "form-control", @required = true, onkeypress = "return blockSpecialChar(event)", @onchange = "CheckMinute(this)" })
+                </div>
+                <div class="col">
+                    <label><b>Instr Night Hrs</b></label>
+                    @Html.TextBoxFor(m => m.InstrNightHrs, new { @class = "form-control", onkeypress = "return blockSpecialChar(event)", @onchange = "CheckMinute(this)" })
+                </div>
+                <div class="col">
+                    <label><b>IMC Hrs</b></label>
+                    @Html.TextBoxFor(m => m.IMCHrs, new { @class = "form-control", onkeypress = "return blockSpecialChar(event)", @onchange = "CheckMinute(this)" })
+                </div>
+                <div class="col">
+                    <label><b>SIF Hrs</b></label>
+                    @Html.TextBoxFor(m => m.SIFHrs, new { @class = "form-control", onkeypress = "return blockSpecialChar(event)", @onchange = "CheckMinute(this)" })
+                </div>
+
+
+
+                <div class="col">
+                    <label><b>Month</b></label>
+                    @Html.DropDownListFor(m => m.Month, (new IHSDC.WebApp.Models.MasterModels()).LoadMonth(), "--Select Month --", new { @data_show_subtext = "true", @class = "select form-control", @data_live_search = "true", @required = true })
+                </div>
+                <div class="col">
+                    <label><b>Year</b></label>
+                    @Html.TextBoxFor(m => m.Year, new { @class = "form-control", @required = true, onkeypress = "return blockSpecialChar(event)", @maxlength = "4", @minlength = "4" })
+                </div>
+
+
+            </div>
+            <div class="row">
+                <div class="col-10"></div>
+                <div class="col" style="margin-top:2.5%;text-align:center">
+                    <button type="submit" value="@ViewBag.ButtonName" name="btnval" class="btn btn-success">@ViewBag.ButtonName</button>
+                    <a class="btn btn-info float-right" href="@Url.Action("Index","Home")" target="_top">
+                        Back
+                    </a>
+                </div>
+            </div>
+
+
+
+
+
+        }
+        <hr />
+        <div class="dropdown-divider"></div>
+
+
+        <div class="table-responsive" id="tt">
+            <table class="table table-bordered" id="dataTable" cellspacing="0">
+
+                <thead>
+
+                    <tr>
+                        <th class="center">S/No</th>
+                        <th class="center">Aviator Name</th>
+                        <th class="center">Aircraft Name</th>
+                        <th class="center">Day Dual Hrs</th>
+                        <th class="center">Day Solo Hrs</th>
+                        <th class="center">Day Copilot Hrs</th>
+                        <th class="center">Night Dual Hrs</th>
+                        <th class="center">Night Solo Hrs</th>
+                        <th class="center">Night Copilot Hrs</th>
+                        @*<th class="center">NVG Exp</th>
+                            <th class="center">WSO Exp</th>
+                            <th class="center">IF Actual</th>
+                            <th class="center">Instr Day Hrs</th>
+                            <th class="center">Instr Night Hrs</th>
+                            <th class="center">IMC Hrs</th>
+                            <th class="center">SIF Hrs</th>
+                            <th class="center">ALH Sml Hrs</th>*@
+                        <th class="center">Month Year</th>
+                        @if (Convert.ToString(SessionManager.Role) == "Unit" || Convert.ToString(SessionManager.Role) == "SecondInCommand" || Convert.ToString(SessionManager.Role) == "FlightCommander")
+                        {
+
+
+                            <th class="center"> Status</th>
+                            <th class="center" width="100px"> Actions </th>
+                        }
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody">
+                    @if (ViewBag.count > 0)
+                    {
+                        foreach (var item in Model.ILAviatorFlyingHrsCRUD)
+                        {
+                            <tr>
+                                <td>
+                                    @{ sno++; }
+                                    @sno
+                                </td>
+                                <td>@Html.DisplayFor(modelItem => item.AviatorName)</td>
+                                <td>@Html.DisplayFor(modelItem => item.AircraftName)</td>
+
+
+                                <td>
+                                    <label><b>@item.ConvertFlyingHrs(item.DayDualHrs)</b></label>
+                                </td>
+                                <td>
+                                    <label><b>@item.ConvertFlyingHrs(item.DaySoloHrs)</b></label>
+                                </td>
+
+                                <td>
+                                    <label><b>@item.ConvertFlyingHrs(item.DayCopilotHrs)</b></label>
+                                </td>
+
+                                <td>
+                                    <label><b>@item.ConvertFlyingHrs(item.NightDualHrs)</b></label>
+                                </td>
+
+                                <td>
+                                    <label><b>@item.ConvertFlyingHrs(item.NightSoloHrs)</b></label>
+                                </td>
+
+                                <td>
+                                    <label><b>@item.ConvertFlyingHrs(item.NightCopilotHrs)</b></label>
+                                </td>
+                                @*
+
+                                     <td>
+                                        <label><b>@item.ConvertFlyingHrs(item.NVGExp)</b></label>
+                                    </td>
+
+                                    <td>
+                                        <label><b>@item.ConvertFlyingHrs(item.WSOExp)</b></label>
+                                    </td>
+
+                                    <td>
+                                        <label><b>@item.ConvertFlyingHrs(item.IF_Actual)</b></label>
+                                    </td>
+
+                                    <td>
+                                        <label><b>@item.ConvertFlyingHrs(item.InstrDayHrs)</b></label>
+                                    </td>
+
+                                    <td>
+                                        <label><b>@item.ConvertFlyingHrs(item.InstrNightHrs)</b></label>
+                                    </td>
+                                    <td>
+                                        <label><b>@item.ConvertFlyingHrs(item.IMCHrs)</b></label>
+                                    </td>
+                                    <td>
+                                        <label><b>@item.ConvertFlyingHrs(item.SIFHrs)</b></label>
+                                    </td>
+                                    <td>
+                                        <label><b>@item.ConvertFlyingHrs(item.ALHSmlHrs)</b></label>
+                                    </td>*@
+
+
+                                <td>
+                                    <label><b>@item.ListYear</b></label>
+                                </td>
+
+                                @if (Convert.ToString(SessionManager.Role) == "Unit" || Convert.ToString(SessionManager.Role) == "SecondInCommand" || Convert.ToString(SessionManager.Role) == "FlightCommander")
+                                {
+
+                                    <td>
+                                        @if (Convert.ToString(SessionManager.Role) == "Unit")
+                                        {
+
+                                            if (item.Validation != null)
+                                            {<label><b> @item.Validation</b></label>}
+
+                                        if (item.CounterValidation != null)
+                                        {<label><b>  @item.CounterValidation</b></label>}
+
+                                    if (item.CounterValidation == null && item.Validation == null)
+                                    {<label><b> New Data</b></label>}
+
+
+                                }
+                                        @if (Convert.ToString(SessionManager.Role) == "SecondInCommand")
+                                        {
+                                            if (item.CounterValidation != "Rejected by Flt Cdr")
+                                            {
+                                                if (item.Validation == "Submitted to 2IC")
+                                                {<label><b>  Submitted By Clk</b></label>}
+
+                                                if (item.CounterValidation == "Submitted to Flt Cdr")
+                                                {<label><b>  @item.CounterValidation</b></label>}
+                                        }
+
+                                        if (item.CounterValidation == "Rejected by Flt Cdr")
+                                        {<label><b>  @item.CounterValidation</b></label>}
+
+
+                                }
+
+
+
+                                        @if (Convert.ToString(SessionManager.Role) == "FlightCommander")
+                                        {
+
+                                            <label><b> @item.Validation</b></label>
+
+
+                                        }
+
+
+                                    </td>
+                                    <td>
+                                        @if (Convert.ToString(SessionManager.Role) == "Unit")
+                                        {
+                                            if (item.Validation == null)
+                                            {
+                                                <a onclick="location.href='@Url.Action("AddAviatorFlyingHrs", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorFlyingHrs_ID.ToString()) })'">
+                                                    <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                                </a><span>|</span>
+                                                <a id="btndel" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorFlyingHrs_ID.ToString())' onclick="DeleteConfirmation(this,'/AA7/DeleteAviatorFlyingHrs')">
+                                                    <img src="~/images/Delete.png" width="30" height="30" border="0" />
+                                                </a><span>|</span>
+                                                <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorFlyingHrs_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorFlyingHrs','Do you want to Submit to 2IC ','SubmitClk')">
+                                                    <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                </a>
+                                            }
+                                            if (item.Validation == "Rejected by 2IC")
+                                            {
+                                                <a onclick="location.href='@Url.Action("AddAviatorFlyingHrs", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorFlyingHrs_ID.ToString()) })'">
+                                                    <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                                </a><span>|</span>
+                                                <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorFlyingHrs_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorFlyingHrs','Do you want to Submit to 2IC ','SubmitClk')">
+                                                    <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                </a>
+                                            }
+                                            if (item.CounterValidation == "Rejected by Flt Cdr")
+                                            {
+                                                <a onclick="location.href='@Url.Action("AddAviatorFlyingHrs", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorFlyingHrs_ID.ToString()) })'">
+                                                    <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                                </a>
+                                                <span>|</span>
+                                                <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorFlyingHrs_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorFlyingHrs','Do you want to Submit to Flt Cdr ','ReSubmitClk')">
+                                                    <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                </a>
+
+                                            }
+                                        }
+                                        @if (Convert.ToString(SessionManager.Role) == "SecondInCommand")
+                                        {
+                                            if (item.CounterValidation != "Rejected by Flt Cdr")
+                                            {
+                                                if (item.Validation == "Submitted to 2IC")
+                                                {
+                                                    <a onclick="location.href='@Url.Action("AddAviatorFlyingHrs", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorFlyingHrs_ID.ToString()) })'">
+                                                        <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                                    </a><span>|</span>
+                                                    <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorFlyingHrs_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorFlyingHrs','Do you want to Submit to Flt Cdr','Validate2IC')">
+                                                        <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                                    </a>
+                                                    <span>|</span>
+                                                    <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorFlyingHrs_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorFlyingHrs','Do you want to Reject ','Reject2IC')">
+                                                        <img src="~/images/Reject.png" width="30" height="30" border="0" />
+                                                    </a>}
+                                            }
+                                        }
+                                        @if (Convert.ToString(SessionManager.Role) == "FlightCommander")
+                                        {
+                                            <a onclick="location.href='@Url.Action("AddAviatorFlyingHrs", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorFlyingHrs_ID.ToString()) })'">
+                                                <img src="~/images/Editnew.png" width="30" height="30" border="0">
+                                            </a><span>|</span>
+                                            <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorFlyingHrs_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorFlyingHrs','Do you want to Counter Validate','ValidateFltCdr')">
+                                                <img src="~/images/CheckSubmit.png" width="30" height="30" border="0" />
+                                            </a>
+                                            <span>|</span>
+                                            <a id="btnsubmit" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorFlyingHrs_ID.ToString())' onclick="SubmitConfirmation(this,'/AA7/SubmitAviatorFlyingHrs','Do you want to Reject ','RejectFltCdr')">
+                                                <img src="~/images/Reject.png" width="30" height="30" border="0" />
+                                            </a>
+                                            <span>|</span>
+                                            <a id="btndel" data-id='@IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.AviatorFlyingHrs_ID.ToString())' onclick="DeleteConfirmation(this,'/AA7/DeleteAviatorFlyingHrs')">
+                                                <img src="~/images/Delete.png" width="30" height="30" border="0" />
+                                            </a>
+                                        }
+
+
+                                    </td>
+                                }
+
+                                <td>
+                                    <a onclick="location.href='@Url.Action("ViewAviatorDetails", "AA7", new { id = IHSDC.WebApp.RepositryManager.EncryptionManager.Encryption(item.Aviator_ID.ToString()) })'">
+                                        <i class="fa fa-eye" style="font-size:25px" aria-hidden="true"></i>
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="4" style="font-weight:600;color:red;text-align:center"> No Record Found!!!</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+
+
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script src="~/Content/CustomJS/DeleteConfirmation.js"></script>
+<script src="~/Content/CustomJS/AviatorJS.js"></script>
+<script src="~/Content/css/sweetalert.min.js"></script>
+<link href="~/Content/css/sweetalert.css" rel="stylesheet" />
+
+
+<script type="text/javascript">
+
+
+
+      var message = '@message';
+    var messageStatus = '@messageStatus';
+    var messagemidStatus = '@messagemidStatus';
+    if (message)
+    sweetAlert(message, messagemidStatus, messageStatus);
+</script>
+
+
